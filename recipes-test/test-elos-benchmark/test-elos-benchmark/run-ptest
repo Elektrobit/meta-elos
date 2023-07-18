@@ -9,7 +9,7 @@ TEST_RUNNER_DIR=/usr/lib/test/elos-benchmark
 crinit-ctl disable elosd
 crinit-ctl stop elosd
 echo "Test-Setup: wait to stop elosd"
-while [ "$(crinit-ctl status elosd|cut -f1 -d ',')" == "Status: running" ]; do
+while [ "$(crinit-ctl status elosd|cut -f1 -d ',')" = "Status: running" ]; do
     echo "."
     sleep 1s
 done
