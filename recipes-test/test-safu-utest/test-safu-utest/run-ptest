@@ -1,0 +1,17 @@
+#!/bin/sh -x
+
+TESTS=$(find /usr/lib/test/safu -type f -executable)
+
+TEST_RESULT_PATH="/tmp/test-safu-utest"
+mkdir -p $TEST_RESULT_PATH    
+
+FAIL=0
+for test in $TESTS; do
+    CMOCKA_MESSAGE_OUTPUT="TAP" $test &> "$TEST_RESULT_PATH/$(basename $test).tap"
+    if [ $? -ne 0 ]; then
+        echo "Test failed: $test"
+        let FAIL++
+    fi
+done
+
+exit $FAIL

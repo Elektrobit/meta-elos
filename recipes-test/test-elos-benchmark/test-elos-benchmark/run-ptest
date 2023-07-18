@@ -1,0 +1,30 @@
+#!/bin/sh -x
+
+export BENCHMARK_RESULT_DIR=/tmp/test-elos-benchmark
+export ELOS_SYSLOG_PATH=/dev/log
+
+
+TEST_RUNNER_DIR=/usr/lib/test/elos-benchmark
+
+crinit-ctl disable elosd
+crinit-ctl stop elosd
+echo "Test-Setup: wait to stop elosd"
+while [ "$(crinit-ctl status elosd|cut -f1 -d ',')" == "Status: running" ]; do
+    echo "."
+    sleep 1s
+done
+echo "Test-Setup: stopped elosd"
+
+FAIL=0
+find $TEST_RUNNER_DIR -name "*.sh" -type f -exec {} \;
+
+crinit-ctl enable elosd
+crinit-ctl restart elosd
+echo "Test-Setup: wait for elosd to start"
+while [ "$(crinit-ctl status elosd|cut -f1 -d ',')" != "Status: running" ]; do
+    echo "."
+    sleep 1s
+done
+echo "Test-Setup: started elosd"
+
+exit $FAIL

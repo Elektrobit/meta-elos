@@ -1,0 +1,34 @@
+#!/bin/sh -x
+
+export SMOKETEST_RESULT_DIR=/tmp/test-elos-smoketest
+export ELOS_SYSLOG_PATH=/dev/log
+export ELOS_KMSG_FILE=/dev/kmsg
+export ELOS_SCANNER_PATH=/usr/lib/elos/scanner
+export SMOKETEST_DIR=/usr/lib/test/elos-smoketest/
+export ELOS_BACKEND_PATH=/usr/lib/elos/backend
+
+TEST_RUNNER=/usr/lib/test/elos-smoketest/smoketest.sh
+
+crinit-ctl disable elosd
+crinit-ctl stop elosd
+echo "Test-Setup: wait to stop elosd"
+while [ "$(crinit-ctl status elosd|cut -f1 -d ',')" == "Status: running" ]; do
+    echo "."
+    sleep 1s
+done
+echo "Test-Setup: stopped elosd"
+
+
+$TEST_RUNNER
+RET=$?
+
+crinit-ctl enable elosd
+crinit-ctl restart elosd
+echo "Test-Setup: wait for elosd to start"
+while [ "$(crinit-ctl status elosd|cut -f1 -d ',')" != "Status: running" ]; do
+    echo "."
+    sleep 1s
+done
+echo "Test-Setup: started elosd"
+
+exit $RET

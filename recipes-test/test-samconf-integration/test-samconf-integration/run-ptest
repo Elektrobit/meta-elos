@@ -1,0 +1,15 @@
+#!/bin/sh -x
+
+export SMOKETEST_RESULT_DIR=/tmp/test-samconf-integration
+
+
+TEST_RUNNER=/usr/lib/test/samconf-integration/smoketest.sh
+
+
+FAIL=0
+$TEST_RUNNER simple_config || let FAIL++
+$TEST_RUNNER signed_config || let FAIL++
+$TEST_RUNNER error_signed_config || let FAIL++
+
+
+exit $FAIL
