@@ -1,6 +1,6 @@
-SRC_VERSION = "0.44.10"
+SRC_VERSION = "0.45.1"
 SRC_GITREF = "branch=integration"
-SRCREV = "a1102e1c6b2a6f5aabbe36c04554b43aa4dd4a55"
+SRCREV = "93eaa55ea3fa33c5a0c50c85047f1a6d4500da91"
 
 #uncomment to build latest integration
 #SRC_GITREF = "branch=integration"
