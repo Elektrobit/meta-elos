@@ -53,8 +53,7 @@ do_install:append () {
   install -d ${D}/${libdir}/test/${PN}-benchmark
 
   # install shared elos mock-libraries only as temporary workaround for a dependency issue in some utests
-  install -D -m 0644 ${WORKDIR}/build/test/utest/mocks/eventprocessor/libmock_eventprocessor.so ${D}/${libdir}/test/${PN}/libmock_eventprocessor.so
-  install -D -m 0644 ${WORKDIR}/build/test/utest/mocks/eventfilter/libmock_eventfilter.so ${D}/${libdir}/test/${PN}/libmock_eventfilter.so
+  install -D -m 0644 ${WORKDIR}/build/test/utest/mocks/components/eventprocessor/libmock_eventprocessor.so ${D}/${libdir}/test/${PN}/libmock_eventprocessor.so
 
   # install smoketest
   install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-smoketest/
