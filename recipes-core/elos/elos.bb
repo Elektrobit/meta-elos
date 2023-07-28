@@ -42,7 +42,7 @@ do_install:append () {
   install -d ${D}/etc/elos
   install -D -m 0644 ${WORKDIR}/elosd.json ${D}/etc/elos
   install -d ${D}/etc/elos/elos_log4c_demo
-  install -D -m 0644 ${S}/src/demo/elos_log4c_demo/log4crc ${D}/etc/elos/elos_log4c_demo
+  install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/etc/elos/elos_log4c_demo
 
   # remove non unit tests
   rm -r ${D}${libdir}/test/elos/libelos/
