@@ -1,4 +1,5 @@
 #!/bin/sh -x
+# SPDX-License-Identifier: MIT
 
 TESTS=$(find /usr/lib/test/samconf -type f -executable)
 

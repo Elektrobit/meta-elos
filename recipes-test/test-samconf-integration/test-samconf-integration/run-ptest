@@ -1,4 +1,5 @@
 #!/bin/sh -x
+# SPDX-License-Identifier: MIT
 
 export SMOKETEST_RESULT_DIR=/tmp/test-samconf-integration
 

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "elos unit test"
 
 LICENSE = "MIT"

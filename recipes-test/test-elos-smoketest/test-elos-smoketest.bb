@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "elos smoketests"
 
 LICENSE = "MIT"

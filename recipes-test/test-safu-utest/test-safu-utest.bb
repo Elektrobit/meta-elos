@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "safu unit test"
 
 LICENSE = "MIT"

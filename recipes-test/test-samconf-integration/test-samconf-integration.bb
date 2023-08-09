@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 SUMMARY = "samconf integration test"
 
 LICENSE = "MIT"
