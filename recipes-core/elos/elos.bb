@@ -16,7 +16,7 @@ SRC_URI += " \
     file://plugin_filter/elos_string_plugin_filter.json \
 "
 
-S = "${WORKDIR}/git/elos"
+S = "${WORKDIR}/git"
 
 PACKAGES += "${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
 

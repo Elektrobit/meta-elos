@@ -2,11 +2,21 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-require elos-src.inc
+SRC_VERSION = "0.49.1"
+SRC_GITREF = "branch=integration"
+SRCREV = "85e38c427c31ed08ccba411a094f2f1c0bc5f2c0"
+
+#uncomment to build latest integration
+#SRC_GITREF = "branch=integration"
+#SRCREV = "${AUTOREV}"
+
+SRC_URI = " \
+    git://git@gitlabintern.emlix.com/elektrobit/base-os/safu.git;protocol=ssh;${SRC_GITREF} \
+"
 
 PV = "${SRC_VERSION}+git${SRCPV}"
 
-S = "${WORKDIR}/git/safu"
+S = "${WORKDIR}/git"
 
 PACKAGES += "${PN}-utest"
 
