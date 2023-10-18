@@ -11,7 +11,7 @@ SRCREV = "45fc17bc9679d6da5473ae35ce8a0776ff649019"
 #SRCREV = "${AUTOREV}"
 
 SRC_URI = " \
-    git://git@gitlabintern.emlix.com/elektrobit/base-os/cmocka-mocks.git;protocol=ssh;${SRC_GITREF} \
+    git://git@gitlabintern.emlix.com/elektrobit/base-os/cmocka_mocks.git;protocol=ssh;${SRC_GITREF} \
 "
 
 PV = "${SRC_VERSION}+git${SRCPV}"
