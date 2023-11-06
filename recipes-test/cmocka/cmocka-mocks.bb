@@ -2,9 +2,9 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.49.2"
+SRC_VERSION = "0.49.3"
 SRC_GITREF = "branch=integration"
-SRCREV = "972542bdc4f03068cd28f54ee7f350a6e29e8eee"
+SRCREV = "6edc7207ac6500d814e77f5b4b047ed0c20e86e5"
 
 #uncomment to build latest integration
 #SRC_GITREF = "branch=integration"
