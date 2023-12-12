@@ -7,6 +7,7 @@ export ELOS_KMSG_FILE=/dev/kmsg
 export ELOS_SCANNER_PATH=/usr/lib/elos/scanner
 export SMOKETEST_DIR=/usr/lib/test/elos-smoketest/
 export ELOS_BACKEND_PATH=/usr/lib/elos/backend
+export ELOS_CLIENT_PATH=/usr/lib/elos/client
 
 TEST_RUNNER=/usr/lib/test/elos-smoketest/smoketest.sh
 
