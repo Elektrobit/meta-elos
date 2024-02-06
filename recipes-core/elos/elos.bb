@@ -18,26 +18,41 @@ SRC_URI += " \
 
 S = "${WORKDIR}/git"
 
-PACKAGES += "${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
+PACKAGES += "${PN}-daemon ${PN}-client ${PN}-demos ${PN}-mocks ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
 
 inherit cmake pkgconfig
 
-EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
+EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release -DELOS_BUILD_DEFAULTS=off"
 
 DEPENDS += " \
   json-c \
-  cmocka \
-  sqlite3 \
-  cmocka-extensions \
-  cmocka-mocks \
   expat \
   gcc-sanitizers \
   safu \
   samconf \
-  sqlite3 \
   libmnl \
-  libesmtp \
+"
+EXTRA_OECMAKE:${PN}-daemon += "-DELOS_DAEMON=on"
+EXTRA_OECMAKE:${PN}-client += "-DELOS_CLIENT=on"
+EXTRA_OECMAKE:${PN}-plugins += "-DELOS_PLUGINS=on"
+DEPENDS:${PN}-plugins += " \
+  sqlite3 \
+"
+EXTRA_OECMAKE:${PN}-demos += "-DELOS_DEMOS=on"
+DEPENDS:${PN}-demos += " \
   log4c \
+  libesmtp \
+"
+EXTRA_OECMAKE:${PN}-mocks += "-DELOS_MOCK_LIBRARY=on"
+DEPENDS:${PN}-mocks += " \
+  cmocka \
+  cmocka-extensions \
+"
+EXTRA_OECMAKE:${PN}-utest += "-DUNIT_TESTS=on"
+DEPENDS:${PN}-utest += " \
+  cmocka \
+  cmocka-extensions \
+  cmocka-mocks \
 "
 
 do_install:append () {
