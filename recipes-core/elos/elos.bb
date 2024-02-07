@@ -18,6 +18,9 @@ SRC_URI += " \
 
 S = "${WORKDIR}/git"
 
+#PACKAGECONFIG ?= "daemon client plugins demos mocks utests"
+#PACKAGECONFIG ?= "daemon client"
+
 PACKAGES += "${PN}-daemon ${PN}-client ${PN}-demos ${PN}-mocks ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
 
 inherit cmake pkgconfig
@@ -32,24 +35,30 @@ DEPENDS += " \
   samconf \
   libmnl \
 "
-EXTRA_OECMAKE:${PN}-daemon += "-DELOS_DAEMON=on"
-EXTRA_OECMAKE:${PN}-client += "-DELOS_CLIENT=on"
-EXTRA_OECMAKE:${PN}-plugins += "-DELOS_PLUGINS=on"
-DEPENDS:${PN}-plugins += " \
+#PACKAGECONFIG[daemon]
+EXTRA_OECMAKE += "-DELOS_DAEMON=on"
+#PACKAGECONFIG[client]
+EXTRA_OECMAKE += "-DELOS_CLIENT=on"
+#PACKAGECONFIG[plugins]
+EXTRA_OECMAKE += "-DELOS_PLUGINS=on"
+DEPENDS += " \
   sqlite3 \
 "
-EXTRA_OECMAKE:${PN}-demos += "-DELOS_DEMOS=on"
-DEPENDS:${PN}-demos += " \
-  log4c \
-  libesmtp \
-"
-EXTRA_OECMAKE:${PN}-mocks += "-DELOS_MOCK_LIBRARY=on"
-DEPENDS:${PN}-mocks += " \
-  cmocka \
-  cmocka-extensions \
-"
-EXTRA_OECMAKE:${PN}-utest += "-DUNIT_TESTS=on"
-DEPENDS:${PN}-utest += " \
+PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,,log4c libesmtp"
+#EXTRA_OECMAKE:${PN}-demos += "-DELOS_DEMOS=on"
+#DEPENDS:${PN}-demos += " \
+#  log4c \
+#  libesmtp \
+#"
+#PACKAGECONFIG[mocks]
+#EXTRA_OECMAKE:${PN}-mocks += "-DELOS_MOCK_LIBRARY=on"
+#DEPENDS += " \
+#  cmocka \
+#  cmocka-extensions \
+#"
+#PACKAGECONFIG[utests]
+EXTRA_OECMAKE += "-DUNIT_TESTS=on"
+DEPENDS += " \
   cmocka \
   cmocka-extensions \
   cmocka-mocks \
@@ -62,7 +71,7 @@ do_install:append () {
   install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/etc/elos/elos_log4c_demo
 
   # remove non unit tests
-  rm -r ${D}${libdir}/test/elos/libelos/
+  #rm -r ${D}${libdir}/test/elos/libelos/
 
   install -d ${D}/${libdir}/test/${PN}
   install -d ${D}/${libdir}/test/${PN}-smoketest
