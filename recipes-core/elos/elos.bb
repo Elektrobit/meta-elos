@@ -18,10 +18,10 @@ SRC_URI += " \
 
 S = "${WORKDIR}/git"
 
-#PACKAGECONFIG ?= "daemon client plugins demos mocks utests"
-#PACKAGECONFIG ?= "daemon client"
+PACKAGECONFIG ?= "daemon client plugins"
 
-PACKAGES += "${PN}-daemon ${PN}-client ${PN}-demos ${PN}-mocks ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
+PACKAGES += "${PN}-daemon ${PN}-client ${PN}-mocks ${PN}-demos ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
+#PACKAGE_BEFORE_PN = "${PN}-demos"
 
 inherit cmake pkgconfig
 
@@ -35,34 +35,12 @@ DEPENDS += " \
   samconf \
   libmnl \
 "
-#PACKAGECONFIG[daemon]
-EXTRA_OECMAKE += "-DELOS_DAEMON=on"
-#PACKAGECONFIG[client]
-EXTRA_OECMAKE += "-DELOS_CLIENT=on"
-#PACKAGECONFIG[plugins]
-EXTRA_OECMAKE += "-DELOS_PLUGINS=on"
-DEPENDS += " \
-  sqlite3 \
-"
-PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,,log4c libesmtp"
-#EXTRA_OECMAKE:${PN}-demos += "-DELOS_DEMOS=on"
-#DEPENDS:${PN}-demos += " \
-#  log4c \
-#  libesmtp \
-#"
-#PACKAGECONFIG[mocks]
-#EXTRA_OECMAKE:${PN}-mocks += "-DELOS_MOCK_LIBRARY=on"
-#DEPENDS += " \
-#  cmocka \
-#  cmocka-extensions \
-#"
-#PACKAGECONFIG[utests]
-EXTRA_OECMAKE += "-DUNIT_TESTS=on"
-DEPENDS += " \
-  cmocka \
-  cmocka-extensions \
-  cmocka-mocks \
-"
+PACKAGECONFIG[daemon] = "-DELOS_DAEMON=on,-DELOS_DAEMON=off"
+PACKAGECONFIG[client] = "-DELOS_CLIENT=on,-DELOS_CLIENT=off"
+PACKAGECONFIG[plugins] = "-DELOS_PLUGINS=on,-DELOS_PLUGINS=off,sqlite3"
+PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
+PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
+PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 
 do_install:append () {
   install -d ${D}/etc/elos
@@ -95,12 +73,27 @@ do_install:append () {
   find ${D}/${libdir}/test/${PN}-benchmark/ -name "*.sh" -type f -exec sed -i 's,/bin/bash,/bin/sh,' {} \;
 }
 
-FILES:${PN} += "/usr/etc/elos"
-FILES:${PN} += "/usr/lib/elos"
 
-FILES:${PN}-utest += "/usr/lib/test/${PN}"
-FILES:${PN}-smoketest += "/usr/lib/test/${PN}-smoketest"
-FILES:${PN}-integration += "/usr/lib/test/${PN}-integration"
-FILES:${PN}-benchmark += "/usr/lib/test/${PN}-benchmark"
+FILES:${PN} = " \
+  /usr/etc/elos \
+  ${libdir}/libelos.so* \
+  ${libdir}/libelosplugin.so* \
+"
+FILES:${PN}-demos = " \
+  ${bindir}/demo_eloslog \
+  ${bindir}/demo_eventbuffer \
+  ${bindir}/demo_libelos_v2 \
+  ${bindir}/demo_scanner_shmem \
+  ${bindir}/elos_log4c_demo \
+  ${bindir}/elosMon \
+  ${bindir}/syslog_example \
+  ${bindir}/tinyElosc \
+  ${libdir}/libeloslog4c.so* \
+"
+FILES:${PN}-plugins = "${libdir}/elos/"
+FILES:${PN}-smoketest += "${libdir}/test/${PN}-smoketest"
+FILES:${PN}-integration += "${libdir}/test/${PN}-integration"
+FILES:${PN}-benchmark += "${libdir}/test/${PN}-benchmark"
+FILES:${PN}-utest += "${libdir}/test/${PN}"
 INSANE_SKIP:${PN}-utest += "staticdev"
 INSANE_SKIP:${PN}-smoketest += "staticdev"
