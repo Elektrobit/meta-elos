@@ -18,9 +18,10 @@ SRC_URI += " \
 
 S = "${WORKDIR}/git"
 
-PACKAGECONFIG ?= "daemon client plugins"
+#PACKAGECONFIG ?= "daemon tools plugins"
+PACKAGECONFIG ?= "daemon tools plugins demos utests"
 
-PACKAGES += "${PN}-daemon ${PN}-client ${PN}-mocks ${PN}-demos ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
+PACKAGES += "${PN}-daemon ${PN}-tools ${PN}-libplugin ${PN}-plugins ${PN}-demos ${PN}-mocks ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
 #PACKAGE_BEFORE_PN = "${PN}-demos"
 
 inherit cmake pkgconfig
@@ -36,17 +37,17 @@ DEPENDS += " \
   libmnl \
 "
 PACKAGECONFIG[daemon] = "-DELOS_DAEMON=on,-DELOS_DAEMON=off"
-PACKAGECONFIG[client] = "-DELOS_CLIENT=on,-DELOS_CLIENT=off"
+PACKAGECONFIG[tools] = "-DELOS_TOOLS=on,-DELOS_TOOLS=off"
 PACKAGECONFIG[plugins] = "-DELOS_PLUGINS=on,-DELOS_PLUGINS=off,sqlite3"
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 
 do_install:append () {
-  install -d ${D}/etc/elos
-  install -D -m 0644 ${WORKDIR}/elosd.json ${D}/etc/elos
-  install -d ${D}/etc/elos/elos_log4c_demo
-  install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/etc/elos/elos_log4c_demo
+  install -d ${D}/${sysconfdir}/elos
+  install -D -m 0644 ${WORKDIR}/elosd.json ${D}/${sysconfdir}/elos
+  install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
+  install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
 
   # remove non unit tests
   #rm -r ${D}${libdir}/test/elos/libelos/
@@ -57,7 +58,7 @@ do_install:append () {
   install -d ${D}/${libdir}/test/${PN}-benchmark
 
   # install shared elos mock-libraries only as temporary workaround for a dependency issue in some utests
-  install -D -m 0644 ${WORKDIR}/build/test/utest/mocks/components/eventprocessor/libmock_eventprocessor.so ${D}/${libdir}/test/${PN}/libmock_eventprocessor.so
+  # install -D -m 0644 ${WORKDIR}/build/test/utest/mocks/components/eventprocessor/libmock_eventprocessor.so ${D}/${libdir}/test/${PN}/libmock_eventprocessor.so
 
   # install smoketest
   install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-smoketest/
@@ -66,7 +67,7 @@ do_install:append () {
   install -m 0644 ${S}/test/smoketest/config_dual.json ${D}/${libdir}/test/${PN}-smoketest/
   install -m 0644 ${S}/test/smoketest/*.txt ${D}/${libdir}/test/${PN}-smoketest/
 
-  sed -i 's,/usr/lib/x86_64-linux-gnu/elos/backend,/usr/lib/elos/backend,' ${D}/${libdir}/test/${PN}-smoketest/config.json
+  sed -i "s,/usr/lib/x86_64-linux-gnu/elos/backend,${libdir}/elos/backend," ${D}/${libdir}/test/${PN}-smoketest/config.json
 
   # install benchmark
   install -m 0755 ${S}/test/benchmark/*.sh ${D}/${libdir}/test/${PN}-benchmark/
@@ -74,10 +75,15 @@ do_install:append () {
 }
 
 
-FILES:${PN} = " \
-  /usr/etc/elos \
-  ${libdir}/libelos.so* \
-  ${libdir}/libelosplugin.so* \
+FILES:${PN} = "${libdir}/libelos.so*"
+FILES:${PN}-libplugin = "${libdir}/libelosplugin.so*"
+FILES:${PN}-daemon = " \
+  ${sysconfdir}/elos/elosd.json \
+  ${bindir}/elosd \
+"
+FILES:${PN}-tools = " \
+  ${bindir}/elosc \
+  ${bindir}/elos-coredump \
 "
 FILES:${PN}-demos = " \
   ${bindir}/demo_eloslog \
@@ -89,11 +95,13 @@ FILES:${PN}-demos = " \
   ${bindir}/syslog_example \
   ${bindir}/tinyElosc \
   ${libdir}/libeloslog4c.so* \
+  ${sysconfdir}/elos/elos_log4c_demo \
 "
-FILES:${PN}-plugins = "${libdir}/elos/"
-FILES:${PN}-smoketest += "${libdir}/test/${PN}-smoketest"
-FILES:${PN}-integration += "${libdir}/test/${PN}-integration"
-FILES:${PN}-benchmark += "${libdir}/test/${PN}-benchmark"
-FILES:${PN}-utest += "${libdir}/test/${PN}"
+FILES:${PN}-plugins = "${libdir}/elos"
+FILES:${PN}-smoketest = "${libdir}/test/${PN}-smoketest"
+FILES:${PN}-integration = "${libdir}/test/${PN}-integration"
+FILES:${PN}-benchmark = "${libdir}/test/${PN}-benchmark"
+FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
+FILES:${PN}-utest = "${libdir}/test/${PN}"
 INSANE_SKIP:${PN}-utest += "staticdev"
 INSANE_SKIP:${PN}-smoketest += "staticdev"
