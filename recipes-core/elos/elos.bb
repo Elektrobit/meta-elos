@@ -18,11 +18,9 @@ SRC_URI += " \
 
 S = "${WORKDIR}/git"
 
-#PACKAGECONFIG ?= "daemon tools plugins"
-PACKAGECONFIG ?= "daemon tools plugins demos utests"
+PACKAGECONFIG ?= "daemon tools plugins"
 
 PACKAGES += "${PN}-daemon ${PN}-tools ${PN}-libplugin ${PN}-plugins ${PN}-demos ${PN}-mocks ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
-#PACKAGE_BEFORE_PN = "${PN}-demos"
 
 inherit cmake pkgconfig
 
@@ -49,20 +47,15 @@ do_install:append () {
   install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
   install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
 
-  # remove non unit tests
-  #rm -r ${D}${libdir}/test/elos/libelos/
-
   install -d ${D}/${libdir}/test/${PN}
   install -d ${D}/${libdir}/test/${PN}-smoketest
   install -d ${D}/${libdir}/test/${PN}-integration
   install -d ${D}/${libdir}/test/${PN}-benchmark
 
-  # install shared elos mock-libraries only as temporary workaround for a dependency issue in some utests
-  # install -D -m 0644 ${WORKDIR}/build/test/utest/mocks/components/eventprocessor/libmock_eventprocessor.so ${D}/${libdir}/test/${PN}/libmock_eventprocessor.so
-
   # install smoketest
   install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-smoketest/
   install -m 0755 ${S}/test/smoketest/smoketest_log.sh ${D}/${libdir}/test/${PN}-smoketest/
+  install -m 0755 ${S}/test/smoketest/smoketest_env.sh ${D}/${libdir}/test/${PN}-smoketest/
   install -m 0644 ${S}/test/smoketest/config.json ${D}/${libdir}/test/${PN}-smoketest/
   install -m 0644 ${S}/test/smoketest/config_dual.json ${D}/${libdir}/test/${PN}-smoketest/
   install -m 0644 ${S}/test/smoketest/*.txt ${D}/${libdir}/test/${PN}-smoketest/
@@ -98,7 +91,9 @@ FILES:${PN}-demos = " \
   ${sysconfdir}/elos/elos_log4c_demo \
 "
 FILES:${PN}-plugins = "${libdir}/elos"
+RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
 FILES:${PN}-smoketest = "${libdir}/test/${PN}-smoketest"
+RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
 FILES:${PN}-integration = "${libdir}/test/${PN}-integration"
 FILES:${PN}-benchmark = "${libdir}/test/${PN}-benchmark"
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
