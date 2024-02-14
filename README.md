@@ -20,22 +20,79 @@ To integrate elos into your embedded linux build by yocto just add this meta-lay
 CORE_IMAGE_BASE_INSTALL += "elos"
 ```
 
+This installes the elos libraries:
+* libelos
+* libelosplugin
+
 ### Configuration
 
-To configure the elos modify the files in "meta-elos/recipes-core/elos/files/"
+To configure elos features to build add a `elos.bbappend` file where you set `PACKAGECONFIG` posible values are:
+* daemon (on by default)
+* tools (on by default)
+* plugins (on by default)
+* demos
+* mocks
+* utests
+
+Or set/append `PACKAGECONFIG_pn_elos`,
+
+To seet the elosd configureaton file edit `meta-elos/recipes-core/elos/files/elosd.json`
+
+## elos daemon
+To add the elos daemon (elosd) "daemon" has to be set in `PACKAGECONFIG ` and then pull in the package "elos-daemon".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-daemon"
+```
+
+## elos tools
+To add the elos tool "tools" must be set in `PACKAGECONFIG` and then just pull in the package "elos-daemon".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-tools"
+```
+
+Following tools are installed:
+* elosc
+* elos-coredump
+
+## elos plugins
+To add the elos plugins "plugins" must be set in the `PACKAGECONFIG` and then just pull in the package "elos-plugins".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-plugins"
+```
+
+Following plugins are added:
+* backend
+  * backend_dummy
+  * backend_json
+  * backend_sql
+' client
+  * client_dummy
+* scanner
+  * scanner_kmsg
+  * scanner_shmem
+  * scanner_syslog
 
 ## elos demos
-
-To add the demos that are part of elos just pull in the recipe "elos-demo".
+To add the demos that are part of elos add `PACKAGECONFIG += "demos"` pull in the package "elos-demo".
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-demo"
+CORE_IMAGE_BASE_INSTALL += "elos-demos"
 ```
-
 
 Following demos are added:
-* coredump
-* email
-* ...
+* demo_eloslog
+* demo_eventbuffer
+* demo_libelos_v2
+* demo_scanner_shmem
+* elos_log4c_demo
+* elosMon 
+* syslog_example
+* tinyElosc
+
+## elos mock library
+To add the mocklibelos for tests that need to mock elos functions add `PACKAGECONFIG += "mocks"` pull in the package "elos-mocks".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-mocks"
+```
 
 ## elos tests
 
@@ -44,8 +101,9 @@ Following demos are added:
 Unit tests of elos are added to the rootfs as follows:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-utest"
+CORE_IMAGE_BASE_INSTALL += test-elos-utest"
 ```
+And building with the `PACKAGECONFIG` "utests" enabled.
 
 The tests can be executed by using ptest.
 
@@ -58,7 +116,7 @@ The unit tests are used by elos developers to verify that the internal functions
 The unit tests for samconf and safu are added like this:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "safu-utest samconf-utest"
+CORE_IMAGE_BASE_INSTALL += "test-safu-utest test-samconf-utest"
 ```
 
 ### Integration tests
@@ -66,15 +124,17 @@ CORE_IMAGE_BASE_INSTALL += "safu-utest samconf-utest"
 Integration tests to verify that elos works on the target as expected can be added this way:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-itest"
+CORE_IMAGE_BASE_INSTALL += "elos-integration"
 ```
+
+The integratin tests need the `PACKAGECONFIG` options "daemon", "tools" and "plugins" to be set.
 
 #### Integration tests of samconf, safu
 
 The integration tests for samconf and safu are added like this:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "safu-itest samconf-itest"
+CORE_IMAGE_BASE_INSTALL += "test-safu-integration test-samconf-integration"
 ```
 
 
