@@ -29,7 +29,6 @@ EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release -DELOS_BUILD_DEFAULTS=off"
 DEPENDS += " \
   json-c \
   expat \
-  gcc-sanitizers \
   safu \
   samconf \
   libmnl \
@@ -95,6 +94,7 @@ RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
 FILES:${PN}-smoketest = "${libdir}/test/${PN}-smoketest"
 RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
 FILES:${PN}-integration = "${libdir}/test/${PN}-integration"
+RDEPENDS:${PN}-benchmark += "${PN}-daemon ${PN}-tools ${PN}-plugins"
 FILES:${PN}-benchmark = "${libdir}/test/${PN}-benchmark"
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
 FILES:${PN}-utest = "${libdir}/test/${PN}"
