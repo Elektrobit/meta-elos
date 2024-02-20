@@ -28,7 +28,6 @@ EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release -DELOS_BUILD_DEFAULTS=off"
 
 DEPENDS += " \
   json-c \
-  expat \
   safu \
   samconf \
   libmnl \
