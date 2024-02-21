@@ -20,7 +20,13 @@ S = "${WORKDIR}/git"
 
 PACKAGECONFIG ?= "daemon tools plugins"
 
-PACKAGES += "${PN}-daemon ${PN}-tools ${PN}-libplugin ${PN}-plugins ${PN}-demos ${PN}-mocks ${PN}-utest ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'daemon', '${PN}-daemon', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'tools', '${PN}-tools', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'plugins', '${PN}-plugins', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
+PACKAGES += "${PN}-libplugin ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
 
 inherit cmake pkgconfig
 
@@ -38,6 +44,8 @@ PACKAGECONFIG[plugins] = "-DELOS_PLUGINS=on,-DELOS_PLUGINS=off,sqlite3"
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
+
+PACKAGESCONFIG_pn-safu += "${@bb.utils.contains('PACKAGECONFIG', 'utests', 'utests', '', d)}"
 
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
