@@ -18,15 +18,18 @@ PV = "${SRC_VERSION}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PACKAGES += "${PN}-utest ${PN}-integration"
+PACKAGES += "${PN}-integration"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
 
 inherit cmake pkgconfig
 
 
 EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
-DEPENDS += "openssl json-c cmocka cmocka-extensions cmocka-mocks gcc-sanitizers safu"
+DEPENDS += "openssl json-c safu"
 RDEPENDS:${PN} += "openssl-bin samconf-key"
+
+PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 
 do_install:append () {
   sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/signature.sh
