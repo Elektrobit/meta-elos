@@ -10,6 +10,7 @@ SRC_URI += " \
     file://elosd.json \
     file://elos_valid_config.json \
     file://elos_invalid_config.json \
+    file://coredump.json \
     file://plugin_filter/elos_empty_plugin_filter.json \
     file://plugin_filter/elos_int_plugin_filter.json \
     file://plugin_filter/elos_missing_plugin_filter.json \
@@ -50,6 +51,7 @@ PACKAGESCONFIG_pn-safu += "${@bb.utils.contains('PACKAGECONFIG', 'utests', 'utes
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
   install -D -m 0644 ${WORKDIR}/elosd.json ${D}/${sysconfdir}/elos
+  install -D -m 0644 ${WORKDIR}/coredump.json ${D}/${sysconfdir}/etc/elos
   install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
   install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
 
