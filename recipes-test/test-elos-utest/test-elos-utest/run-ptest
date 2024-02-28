@@ -1,0 +1,27 @@
+#!/bin/sh -x
+# SPDX-License-Identifier: MIT
+
+export LD_LIBRARY_PATH=/usr/lib/elos/scanner/:/usr/lib/test/elos/
+
+TESTS=$(find /usr/lib/test/elos -type f -executable)
+
+#skip failing test cases
+FAILTESTPATH=""
+TEST_RESULT_PATH="/tmp/test-elos-utest"
+mkdir -p $TEST_RESULT_PATH    
+
+for i in $FAILTESTPATH; do
+    echo "skip $i"
+    TESTS=$(echo $TESTS | sed "s|${i}[ ]*||g")
+done
+
+FAIL=0
+for test in $TESTS; do
+    CMOCKA_MESSAGE_OUTPUT="TAP" $test &> "$TEST_RESULT_PATH/$(basename $test).tap"
+    if [ $? -ne 0 ]; then
+        echo "Test failed: $test"
+        let FAIL++
+    fi
+done
+
+exit $FAIL

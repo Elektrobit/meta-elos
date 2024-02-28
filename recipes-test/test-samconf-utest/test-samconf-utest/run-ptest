@@ -1,0 +1,22 @@
+#!/bin/sh -x
+# SPDX-License-Identifier: MIT
+
+TESTS=$(find /usr/lib/test/samconf -type f -executable)
+
+#skip failing test case
+#FAILTESTPATH="/usr/lib/test/samconf/utest/logline_mapper/test_logline_mapper_EBCL_loglineMapperDoMapping_utest"
+#TESTS=$(echo $TESTS | sed "s|$FAILTESTPATH[ ]*||g")
+
+TEST_RESULT_PATH="/tmp/test-samconf-utest"
+mkdir -p $TEST_RESULT_PATH    
+
+FAIL=0
+for test in $TESTS; do
+    CMOCKA_MESSAGE_OUTPUT="TAP" $test &> "$TEST_RESULT_PATH/$(basename $test).tap"
+    if [ $? -ne 0 ]; then
+        echo "Test failed: $test"
+        let FAIL++
+    fi
+done
+
+exit $FAIL

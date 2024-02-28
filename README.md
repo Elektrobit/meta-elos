@@ -1,93 +1,207 @@
-# eb-baseos-meta-elos
+# Event Logging and Management System (elos) - Yocto layer
+
+<img src="doc/static/elos_blue.svg" width=20% height=20% align="right">
+
+elos is a tool to collect, store and publish various system events (i.e. syslogs, core dumps, measurements obtained from proc- and sys-fs, …) while providing easy access to the collected data.
 
 
+This *Yocto meta layer* contains all the recipes needed to build the elos into a Yocto image.
 
-## Getting started
+For instructions on using elos, please see
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+* https://elos-logger.org/
+* https://github.com/Elektrobit/elos
+* https://elektrobit.github.io/elos/
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## elos
 
-## Add your files
+To integrate elos into your embedded linux build by yocto just add this meta-layer and add "elos" to "CORE_IMAGE_BASE_INSTALL":
+```
+CORE_IMAGE_BASE_INSTALL += "elos"
+```
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+This installes the elos libraries:
+* libelos
+* libelosplugin
+
+### Configuration
+
+To configure elos features to build add a `elos.bbappend` file where you set `PACKAGECONFIG` posible values are:
+* daemon (on by default)
+* tools (on by default)
+* plugins (on by default)
+* demos
+* mocks
+* utests
+
+Or set/append `PACKAGECONFIG_pn_elos`,
+
+To seet the elosd configureaton file edit `meta-elos/recipes-core/elos/files/elosd.json`
+
+## elos daemon
+To add the elos daemon (elosd) "daemon" has to be set in `PACKAGECONFIG ` and then pull in the package "elos-daemon".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-daemon"
+```
+
+## elos tools
+To add the elos tool "tools" must be set in `PACKAGECONFIG` and then just pull in the package "elos-daemon".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-tools"
+```
+
+Following tools are installed:
+* elosc
+* elos-coredump
+
+## elos plugins
+To add the elos plugins "plugins" must be set in the `PACKAGECONFIG` and then just pull in the package "elos-plugins".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-plugins"
+```
+
+Following plugins are added:
+* backend
+  * backend_dummy
+  * backend_json
+  * backend_sql
+' client
+  * client_dummy
+* scanner
+  * scanner_kmsg
+  * scanner_shmem
+  * scanner_syslog
+
+## elos demos
+To add the demos that are part of elos add `PACKAGECONFIG += "demos"` pull in the package "elos-demo".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-demos"
+```
+
+Following demos are added:
+* demo_eloslog
+* demo_eventbuffer
+* demo_libelos_v2
+* demo_scanner_shmem
+* elos_log4c_demo
+* elosMon 
+* syslog_example
+* tinyElosc
+
+## elos mock library
+To add the mocklibelos for tests that need to mock elos functions add `PACKAGECONFIG += "mocks"` pull in the package "elos-mocks".
+```
+CORE_IMAGE_BASE_INSTALL += "elos-mocks"
+```
+
+## elos tests
+
+### Unit tests
+
+Unit tests of elos are added to the rootfs as follows:
 
 ```
-cd existing_repo
-git remote add origin https://gitlabintern.emlix.com/elektrobit/base-os/eb-baseos-meta-elos.git
-git branch -M main
-git push -uf origin main
+CORE_IMAGE_BASE_INSTALL += test-elos-utest"
+```
+And building with the `PACKAGECONFIG` "utests" enabled.
+
+The tests can be executed by using ptest.
+
+#### Intentions of unit tests
+
+The unit tests are used by elos developers to verify that the internal functions are working as expected. In this sense they are classic unit-tests.
+
+#### Unit tests of samconf, safu
+
+The unit tests for samconf and safu are added like this:
+
+```
+CORE_IMAGE_BASE_INSTALL += "test-safu-utest test-samconf-utest"
 ```
 
-## Integrate with your tools
+### Integration tests
 
-- [ ] [Set up project integrations](https://gitlabintern.emlix.com/elektrobit/base-os/eb-baseos-meta-elos/-/settings/integrations)
+Integration tests to verify that elos works on the target as expected can be added this way:
 
-## Collaborate with your team
+```
+CORE_IMAGE_BASE_INSTALL += "elos-integration"
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+The integratin tests need the `PACKAGECONFIG` options "daemon", "tools" and "plugins" to be set.
 
-## Test and Deploy
+#### Integration tests of samconf, safu
 
-Use the built-in continuous integration in GitLab.
+The integration tests for samconf and safu are added like this:
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```
+CORE_IMAGE_BASE_INSTALL += "test-safu-integration test-samconf-integration"
+```
 
-***
 
-# Editing this README
+### Smoke Tests
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Smoke tests are a subset of integration tests that run faster and give a quick feedback on testing results. The are added this way:
 
-## Suggestions for a good README
+```
+CORE_IMAGE_BASE_INSTALL += "elos-smoketests"
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+These tests should be run in a CI.
 
-## Name
-Choose a self-explaining name for your project.
+### Benchmarks
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Benchmarking of elos is possible with following addition:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```
+CORE_IMAGE_BASE_INSTALL += "elos-benchmarks"
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
 
 ## License
-For open source projects, say how it is licensed.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+MIT License
+
+Copyright (c) [2024] [emlix GmbH, Elektrobit Automotive GmbH]
+
+The full text of the license can be found in the [LICENSE](LICENSE) file in the repository root directory.
+
+### Powered by EB
+
+<img src="doc/static/eb-logo.png" width=70 height=70 align="left">
+elos is powered by elektrobit automotive gmbh.
+Elektrobit is an automotive software company and developer of embedded software products for ECU, AUTOSAR, automated driving, connected vehicles and UX.
+elos isan  integrated part of EB corbos Linux – built on Ubuntu is an open-source operating system for high-performance computing, leveraging the rich functionality of Linux while meeting security and industry regulations.
+
+
+### Maintainers
+
+* Wolfgang Gehrhardt wolfgang.gehrhardt@emlix.com [@gehwolf](https://github.com/gehwolf)
+* Thomas Brinker thomas.brinker@emlix.com [@ThomasBrinker](https://github.com/ThomasBrinker)
+
+### Credits
+
+* Andreas Schickedanz
+* Andreas Zdziarstek
+* Anja Lehwess-Litzmann
+* Annika Schmitt
+* Anton Hillerband
+* Benedikt Braunger
+* Christian Steiger
+* Daniel Glöckner
+* Fabian Godehardt
+* Friedrich Schwedler
+* Rainer Müller
+* Sabrina Otto
+* Stefan Kral
+* Thomas Brinker
+* Vignesh Jayaraman
+* Wolfgang Gehrhardt
+
+### Artwork
+
+The elos logo is the Vombatus ursinus, also known as the bare-nosed wombat,
+designed from the handwriting word elos. Originator is Anja Lehwess-Litzmann
+(emlix GmbH). Year 2023. It is licensed under Creative Commons No Derivatives
+(CC-nd). It shall be used in black on white or HKS43 color.
