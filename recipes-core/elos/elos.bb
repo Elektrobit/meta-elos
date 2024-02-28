@@ -51,7 +51,7 @@ PACKAGESCONFIG_pn-safu += "${@bb.utils.contains('PACKAGECONFIG', 'utests', 'utes
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
   install -D -m 0644 ${WORKDIR}/elosd.json ${D}/${sysconfdir}/elos
-  install -D -m 0644 ${WORKDIR}/coredump.json ${D}/${sysconfdir}/etc/elos
+  install -D -m 0644 ${WORKDIR}/coredump.json ${D}/${sysconfdir}/elos
   install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
   install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
 
@@ -85,6 +85,7 @@ FILES:${PN}-daemon = " \
 FILES:${PN}-tools = " \
   ${bindir}/elosc \
   ${bindir}/elos-coredump \
+  ${sysconfdir}/elos/coredump.json \
 "
 FILES:${PN}-demos = " \
   ${bindir}/demo_eloslog \
