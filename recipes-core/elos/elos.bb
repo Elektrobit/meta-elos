@@ -76,7 +76,7 @@ do_install:append () {
 
   # delete the unit tests folder if its empty to avoid yocot complaining
   # when utest packageconfig is not set
-  rmdir ${D}/${libdir}/test/${PN}
+  rmdir ${D}/${libdir}/test/${PN} || true
 }
 
 
