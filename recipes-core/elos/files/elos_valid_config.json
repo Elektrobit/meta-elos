@@ -26,6 +26,13 @@
                 }
             },
             "Scanner": {
+                "PluginSearchPath": "/usr/lib/elos/scanner",
+                "Plugins": {
+                    "ScannerDummy": {
+                        "File": "scanner_dummy.so",
+                        "Run": "always"
+                    }
+                },
                 "SyslogScanner": {
                     "Syslog": "/dev/log",
                     "MappingRules": {
