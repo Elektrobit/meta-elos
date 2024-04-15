@@ -27,7 +27,8 @@ inherit cmake pkgconfig
 EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
 DEPENDS += "openssl json-c safu"
-RDEPENDS:${PN} += "openssl-bin samconf-key"
+RDEPENDS:${PN} += "openssl-bin"
+RDEPENDS:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'samconf-key', 'samconf-key', '', d)}"
 
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 

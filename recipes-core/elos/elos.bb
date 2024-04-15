@@ -73,6 +73,10 @@ do_install:append () {
   # install benchmark
   install -m 0755 ${S}/test/benchmark/*.sh ${D}/${libdir}/test/${PN}-benchmark/
   find ${D}/${libdir}/test/${PN}-benchmark/ -name "*.sh" -type f -exec sed -i 's,/bin/bash,/bin/sh,' {} \;
+
+  # delete the unit tests folder if its empty to avoid yocot complaining
+  # when utest packageconfig is not set
+  rmdir ${D}/${libdir}/test/${PN} || true
 }
 
 

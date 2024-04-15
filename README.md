@@ -13,11 +13,16 @@ For instructions on using elos, please see
 * https://github.com/Elektrobit/elos
 * https://elektrobit.github.io/elos/
 
+## Minimal test image
+
+To quickly build a minimal image with elos installed run `ci/docker-run.sh` to enter a docker container with the build environment.
+And then run `bitbake core-image-minimal` to build the image and `runqemu nographic` to run it.
+
 ## elos
 
-To integrate elos into your embedded linux build by yocto just add this meta-layer and add "elos" to "CORE_IMAGE_BASE_INSTALL":
+To integrate elos into your embedded linux build by yocto just add this meta-layer and add "elos" to "CORE_IMAGE_EXTRA_INSTALL":
 ```
-CORE_IMAGE_BASE_INSTALL += "elos"
+CORE_IMAGE_EXTRA_INSTALL += "elos"
 ```
 
 This installes the elos libraries:
@@ -41,13 +46,13 @@ To seet the elosd configureaton file edit `meta-elos/recipes-core/elos/files/elo
 ## elos daemon
 To add the elos daemon (elosd) "daemon" has to be set in `PACKAGECONFIG ` and then pull in the package "elos-daemon".
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-daemon"
+CORE_IMAGE_EXTRA_INSTALL += "elos-daemon"
 ```
 
 ## elos tools
 To add the elos tool "tools" must be set in `PACKAGECONFIG` and then just pull in the package "elos-daemon".
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-tools"
+CORE_IMAGE_EXTRA_INSTALL += "elos-tools"
 ```
 
 Following tools are installed:
@@ -57,7 +62,7 @@ Following tools are installed:
 ## elos plugins
 To add the elos plugins "plugins" must be set in the `PACKAGECONFIG` and then just pull in the package "elos-plugins".
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-plugins"
+CORE_IMAGE_EXTRA_INSTALL += "elos-plugins"
 ```
 
 Following plugins are added:
@@ -75,7 +80,7 @@ Following plugins are added:
 ## elos demos
 To add the demos that are part of elos add `PACKAGECONFIG += "demos"` pull in the package "elos-demo".
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-demos"
+CORE_IMAGE_EXTRA_INSTALL += "elos-demos"
 ```
 
 Following demos are added:
@@ -91,7 +96,7 @@ Following demos are added:
 ## elos mock library
 To add the mocklibelos for tests that need to mock elos functions add `PACKAGECONFIG += "mocks"` pull in the package "elos-mocks".
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-mocks"
+CORE_IMAGE_EXTRA_INSTALL += "elos-mocks"
 ```
 
 ## elos tests
@@ -101,7 +106,7 @@ CORE_IMAGE_BASE_INSTALL += "elos-mocks"
 Unit tests of elos are added to the rootfs as follows:
 
 ```
-CORE_IMAGE_BASE_INSTALL += test-elos-utest"
+CORE_IMAGE_EXTRA_INSTALL += test-elos-utest"
 ```
 And building with the `PACKAGECONFIG` "utests" enabled.
 
@@ -116,7 +121,7 @@ The unit tests are used by elos developers to verify that the internal functions
 The unit tests for samconf and safu are added like this:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "test-safu-utest test-samconf-utest"
+CORE_IMAGE_EXTRA_INSTALL += "test-safu-utest test-samconf-utest"
 ```
 
 ### Integration tests
@@ -124,7 +129,7 @@ CORE_IMAGE_BASE_INSTALL += "test-safu-utest test-samconf-utest"
 Integration tests to verify that elos works on the target as expected can be added this way:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-integration"
+CORE_IMAGE_EXTRA_INSTALL += "elos-integration"
 ```
 
 The integratin tests need the `PACKAGECONFIG` options "daemon", "tools" and "plugins" to be set.
@@ -134,7 +139,7 @@ The integratin tests need the `PACKAGECONFIG` options "daemon", "tools" and "plu
 The integration tests for samconf and safu are added like this:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "test-safu-integration test-samconf-integration"
+CORE_IMAGE_EXTRA_INSTALL += "test-safu-integration test-samconf-integration"
 ```
 
 
@@ -143,7 +148,7 @@ CORE_IMAGE_BASE_INSTALL += "test-safu-integration test-samconf-integration"
 Smoke tests are a subset of integration tests that run faster and give a quick feedback on testing results. The are added this way:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-smoketests"
+CORE_IMAGE_EXTRA_INSTALL += "elos-smoketests"
 ```
 
 These tests should be run in a CI.
@@ -153,7 +158,7 @@ These tests should be run in a CI.
 Benchmarking of elos is possible with following addition:
 
 ```
-CORE_IMAGE_BASE_INSTALL += "elos-benchmarks"
+CORE_IMAGE_EXTRA_INSTALL += "elos-benchmarks"
 ```
 
 
