@@ -46,6 +46,11 @@ PACKAGECONFIG[dlt] = " \
   -DELOSD_LIBDLT=on -DELOSD_EVENTLOGGING_BACKEND_DLT=on, \
   -DELOSD_LIBDLT=off -DELOSD_EVENTLOGGING_BACKEND_DLT=off \
 "
+PACKAGECONFIG[mongodb] = " \
+  -DELOSD_EVENTLOGGING_BACKEND_NOSQL=on, \
+  -DELOSD_EVENTLOGGING_BACKEND_NOSQL=off, \
+  mongoc \
+"
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
