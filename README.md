@@ -38,6 +38,8 @@ To configure elos features to build add a `elos.bbappend` file where you set `PA
 * demos
 * mocks
 * utests
+* dlt
+* mongodb
 
 Or set/append `PACKAGECONFIG_pn_elos`,
 
@@ -70,6 +72,8 @@ Following plugins are added:
   * backend_dummy
   * backend_json
   * backend_sql
+  * backend_dlt (if dlt PACKAGECONFIG option is set)
+  * backend_nosql (if mongodb PACKAGECONFIG option is set)
 ' client
   * client_dummy
 * scanner
@@ -89,9 +93,29 @@ Following demos are added:
 * demo_libelos_v2
 * demo_scanner_shmem
 * elos_log4c_demo
+* elosDLT  (if dlt PACKAGECONFIG option is set)
 * elosMon 
 * syslog_example
 * tinyElosc
+
+## DLT
+To build elos with DLT support, either add `PACKAGECONFIG += "dlt"` to your
+`elos.bbappend` or add `PACKAGECONFIG:append:pn-elos = "dlt"`.
+
+Make sure elos plugins and elos demos is added to package the DLT-Plugin and
+DLT-Demo.
+```
+CORE_IMAGE_EXTRA_INSTALL += "elos-plugins elos-demos"
+```
+
+## MongoDB
+To build elos with MongoDB support, either add `PACKAGECONFIG += "mongodb"` to your
+`elos.bbappend` or add `PACKAGECONFIG:append:pn-elos = "mongodb"`.
+
+Make sure elos plugins and elos demos is added to package the MongoDB-Plugin.
+```
+CORE_IMAGE_EXTRA_INSTALL += "elos-plugins"
+```
 
 ## elos mock library
 To add the mocklibelos for tests that need to mock elos functions add `PACKAGECONFIG += "mocks"` pull in the package "elos-mocks".

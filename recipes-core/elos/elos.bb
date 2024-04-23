@@ -42,6 +42,15 @@ DEPENDS += " \
 PACKAGECONFIG[daemon] = "-DELOS_DAEMON=on,-DELOS_DAEMON=off"
 PACKAGECONFIG[tools] = "-DELOS_TOOLS=on,-DELOS_TOOLS=off"
 PACKAGECONFIG[plugins] = "-DELOS_PLUGINS=on,-DELOS_PLUGINS=off,sqlite3"
+PACKAGECONFIG[dlt] = " \
+  -DELOSD_LIBDLT=on -DELOSD_EVENTLOGGING_BACKEND_DLT=on, \
+  -DELOSD_LIBDLT=off -DELOSD_EVENTLOGGING_BACKEND_DLT=off \
+"
+PACKAGECONFIG[mongodb] = " \
+  -DELOSD_EVENTLOGGING_BACKEND_NOSQL=on, \
+  -DELOSD_EVENTLOGGING_BACKEND_NOSQL=off, \
+  mongoc \
+"
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
@@ -80,7 +89,10 @@ do_install:append () {
 }
 
 
-FILES:${PN} = "${libdir}/libelos.so*"
+FILES:${PN} = " \
+  ${libdir}/libelos.so* \
+  ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
+"
 FILES:${PN}-libplugin = "${libdir}/libelosplugin.so*"
 FILES:${PN}-daemon = " \
   ${sysconfdir}/elos/elosd.json \
@@ -102,6 +114,7 @@ FILES:${PN}-demos = " \
   ${bindir}/tinyElosc \
   ${libdir}/libeloslog4c.so* \
   ${sysconfdir}/elos/elos_log4c_demo \
+  ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${bindir}/elosDlt', '', d)} \
 "
 FILES:${PN}-plugins = "${libdir}/elos"
 RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
