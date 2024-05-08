@@ -6,10 +6,13 @@
             "Interface": "0.0.0.0",
             "EventBlacklist": ".event.messageCode 2000 EQ",
             "authorizedProcesses": [
-		    ".process.uid 0 EQ .process.gid 0 EQ .process.exec '/bin/elosc' STRCMP AND",
-		    ".process.gid 200 EQ .process.exec '/bin/elosc' STRCMP AND",
-		    ".process.pid 1 EQ"
-	    ],
+                ".process.uid 0 EQ .process.gid 0 EQ .process.exec '/bin/elosc' STRCMP AND",
+                ".process.gid 200 EQ .process.exec '/bin/elosc' STRCMP AND",
+                ".process.pid 1 EQ"
+            ],
+            "ClientInputs": {
+                "Plugins": {}
+            },
             "EventLogging": {
                 "PluginSearchPath": "/usr/lib/x86_64-linux-gnu/elos/backend",
                 "Plugins": {
@@ -17,7 +20,7 @@
                         "File": "backend_json.so",
                         "Run": "always",
                         "Filter": [
-                           "1 1 EQ"
+                            "1 1 EQ"
                         ]
                     }
                 }
