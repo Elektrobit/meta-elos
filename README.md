@@ -133,7 +133,7 @@ Unit tests of elos are added to the rootfs as follows:
 CORE_IMAGE_EXTRA_INSTALL += test-elos-utest"
 ```
 And building with the `PACKAGECONFIG` "utests" enabled.
-In additon the `PACKAGECONFIG` "mocks" need to be enabled for safu and samconf
+In additon the `PACKAGECONFIG` "mocks" need to be enabled for safu and samconf.
 
 The tests can be executed by using ptest.
 
