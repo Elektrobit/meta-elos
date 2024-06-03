@@ -31,6 +31,11 @@ RDEPENDS:${PN} += "openssl-bin"
 RDEPENDS:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'samconf-key', 'samconf-key', '', d)}"
 
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
+PACKAGECONFIG[mocks] = " \
+  -DSAMCONF_MOCK_LIBRARY=on, \
+  -DSAMCONF_MOCK_LIBRARY=off, \
+  cmocka cmocka-extensions \
+"
 
 do_install:append () {
   sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/signature.sh
