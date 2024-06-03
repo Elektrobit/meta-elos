@@ -27,15 +27,12 @@ if [ "$SSH_AUTH_SOCK" ]; then
 fi
 
 localconf="$BASEDIR/build/conf/local.conf"
-if [ ! -f "$localconf" ]; then
-    mkdir -p "$(dirname "$localconf")"
-    cp "$BASEDIR/ci/local.conf" "$localconf"
-fi
+mkdir -p "$(dirname "$localconf")"
+cp "$BASEDIR/ci/local.conf" "$localconf"
+
 bblayersconf="$BASEDIR/build/conf/bblayers.conf"
-if [ ! -f "$bblayersconf" ]; then
-    mkdir -p "$(dirname "$bblayersconf")"
-    cp "$BASEDIR/ci/bblayers.conf" "$bblayersconf"
-fi
+mkdir -p "$(dirname "$bblayersconf")"
+cp "$BASEDIR/ci/bblayers.conf" "$bblayersconf"
 
 echo "==> run $PROJECT build container"
 mkdir -p "$BBCACHE"
