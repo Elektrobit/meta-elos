@@ -28,6 +28,11 @@ EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 DEPENDS += "json-c"
 
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
+PACKAGECONFIG[mocks] = " \
+    -DSAFU_MOCK_LIBRARY=on, \
+    -DSAFU_MOCK_LIBRARY=off, \
+    cmocka cmocka-extensions \
+"
 
 FILES:${PN} += "/usr/lib/${PN}"
 

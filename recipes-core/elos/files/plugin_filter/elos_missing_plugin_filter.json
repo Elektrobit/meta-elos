@@ -14,6 +14,8 @@
                 }
             },
             "Scanner": {
+                "PluginSearchPath": "/usr/lib/elos/backend",
+                "Plugins": { },
                 "SyslogScanner": {
                     "Syslog": "/dev/log",
                     "MappingRules": {
