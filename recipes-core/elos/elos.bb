@@ -19,6 +19,7 @@ SRC_URI += " \
 
 S = "${WORKDIR}/git"
 
+
 PACKAGECONFIG ?= "daemon tools plugins"
 
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'daemon', '${PN}-daemon', '', d)}"
