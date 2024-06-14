@@ -2,6 +2,8 @@
 
 <img src="doc/static/elos_blue.svg" width=20% height=20% align="right">
 
+![Yocto workflow](https://github.com/Elektrobit/meta-elos/actions/workflows/build-core-image-minimal.yml/badge.svg)
+
 elos is a tool to collect, store and publish various system events (i.e. syslogs, core dumps, measurements obtained from proc- and sys-fs, …) while providing easy access to the collected data.
 
 
