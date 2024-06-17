@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
-SRC_VERSION = "0.58.8"
+SRC_VERSION = "0.58.12"
 SRC_GITREF = "branch=integration"
-SRCREV = "7c0104ef63a006473895790c75889442c50702f6"
+SRCREV = "09436bb6e732d5c77f6e3c725f0cee78f720701f"
 
 #uncomment to build latest integration
 #SRC_GITREF = "branch=integration"

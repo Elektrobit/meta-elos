@@ -27,7 +27,7 @@ PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'plugins', '${PN}-plugins', '
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
-PACKAGES += "${PN}-libplugin ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
+PACKAGES += "${PN}-common ${PN}-libplugin ${PN}-smoketest ${PN}-integration ${PN}-benchmark"
 
 inherit cmake pkgconfig
 
@@ -88,21 +88,27 @@ do_install:append () {
   rmdir ${D}/${libdir}/test/${PN} || true
 }
 
-
+FILES:${PN}-common = " \
+  ${libdir}/libelos_common.so* \
+"
 FILES:${PN} = " \
   ${libdir}/libelos.so* \
   ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
 "
+RDEPENDS:${PN} += "${PN}-common"
 FILES:${PN}-libplugin = "${libdir}/libelosplugin.so*"
+RDEPENDS:${PN}-libplugin += "${PN}-common"
 FILES:${PN}-daemon = " \
   ${sysconfdir}/elos/elosd.json \
   ${bindir}/elosd \
 "
+RDEPENDS:${PN}-daemon += "${PN}-common"
 FILES:${PN}-tools = " \
   ${bindir}/elosc \
   ${bindir}/elos-coredump \
   ${sysconfdir}/elos/coredump.json \
 "
+RDEPENDS:${PN}-tools += "${PN}-common"
 FILES:${PN}-demos = " \
   ${bindir}/demo_eloslog \
   ${bindir}/demo_eventbuffer \
@@ -116,7 +122,9 @@ FILES:${PN}-demos = " \
   ${sysconfdir}/elos/elos_log4c_demo \
   ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${bindir}/elosDlt', '', d)} \
 "
+RDEPENDS:${PN}-demos += "${PN}-common"
 FILES:${PN}-plugins = "${libdir}/elos"
+RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
 RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
 FILES:${PN}-smoketest = "${libdir}/test/${PN}-smoketest"
 RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
