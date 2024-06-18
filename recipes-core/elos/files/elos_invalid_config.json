@@ -15,7 +15,7 @@
                 "Plugins": {
                     "JsonBackend": {
                         "File": "backend_json.so",
-                        "Run": "always",
+                        "Run": "always"
                     }
                 }
             },
