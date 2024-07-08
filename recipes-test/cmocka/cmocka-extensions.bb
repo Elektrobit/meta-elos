@@ -3,15 +3,17 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_VERSION = "0.50.0"
-SRC_GITREF = "branch=integration"
-SRCREV = "42751eb9560ca08228aa451fb7aaf4aa0d0ab097"
+SRC_GITREF = "branch=main"
+SRCREV = "9c6a2870ec7e16173574c096df5e276da059899d"
 
-#uncomment to build latest integration
-#SRC_GITREF = "branch=integration"
+#uncomment to build latest version
+#SRC_GITREF = "branch=main"
 #SRCREV = "${AUTOREV}"
 
+CMOCKA_EXT_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/cmocka_extensions.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
+
 SRC_URI = " \
-    git://git@gitlabintern.emlix.com/elektrobit/base-os/cmocka_extensions.git;protocol=ssh;${SRC_GITREF} \
+    ${CMOCKA_EXT_SRC_REPO};${SRC_GITREF} \
 "
 
 PV = "${SRC_VERSION}+git${SRCPV}"

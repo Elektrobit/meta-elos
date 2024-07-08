@@ -2,16 +2,19 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.53.3"
-SRC_GITREF = "branch=integration"
-SRCREV = "304777fb60e6121a8d83925c9838fc0eb7ec6e0d"
+SRC_VERSION = "0.53.4"
+SRC_GITREF = "branch=main"
+SRCREV = "e8768a7b36fb4b8f5de1b337c06b85c84811b3ac"
 
-#uncomment to build latest integration
-#SRC_GITREF = "branch=integration"
-#SRCREV = "${AUTOREV}"
+#uncomment to build latest version
+#SRC_GITREF = "branch=main"
+#SRCREV = ${AUTOREV}
+
+
+SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
 SRC_URI = " \
-    git://git@gitlabintern.emlix.com/elektrobit/base-os/samconf.git;protocol=ssh;${SRC_GITREF} \
+    ${SAMCONF_SRC_REPO};${SRC_GITREF} \
 "
 
 PV = "${SRC_VERSION}+git${SRCPV}"

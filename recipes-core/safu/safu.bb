@@ -3,15 +3,17 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_VERSION = "0.52.4"
-SRC_GITREF = "branch=integration"
-SRCREV = "0ad603d57d74b512399b063a0186eb8cc315e33f"
+SRC_GITREF = "branch=main"
+SRCREV = "7e54e7f47d311f1bcd872eea44a8faeba232d0ad"
 
-#uncomment to build latest integration
-#SRC_GITREF = "branch=integration"
-#SRCREV = "${AUTOREV}"
+#uncomment to build latest version
+#SRC_GITREF = "branch=main"
+#SRCREV = ${AUTOREV}
+
+SAFU_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/safu.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
 SRC_URI = " \
-    git://git@gitlabintern.emlix.com/elektrobit/base-os/safu.git;protocol=ssh;${SRC_GITREF} \
+    ${SAFU_SRC_REPO};${SRC_GITREF} \
 "
 
 PV = "${SRC_VERSION}+git${SRCPV}"
