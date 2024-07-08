@@ -18,6 +18,11 @@ For instructions on using elos, please see
 To quickly build a minimal image with elos installed run `ci/docker-run.sh` to enter a docker container with the build environment.
 And then run `bitbake core-image-minimal` to build the image and `runqemu nographic` to run it.
 
+## Elos source repository
+
+The repositories used to pull elos and its dependencies are set using the "META_ELOS_SRC_REPO_BASE" and "META_ELOS_SRC_REPO_PROTOCOL_PARAM" variables under `conf/layer.conf`. The default location
+to pull the repositories is "git://github.com/Elektrobit" and the default protocol is  "protocol=https". The repositories can be customized according to user preferences by either directly changing these variables in this layer or setting these variables in an other layer with higher priority so that the variables will get over written.
+
 ## elos
 
 To integrate elos into your embedded linux build by yocto just add this meta-layer and add "elos" to "CORE_IMAGE_EXTRA_INSTALL":
