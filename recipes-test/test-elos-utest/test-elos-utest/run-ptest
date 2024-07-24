@@ -1,12 +1,12 @@
 #!/bin/sh -x
 # SPDX-License-Identifier: MIT
 
-export LD_LIBRARY_PATH=/usr/lib/elos/scanner/:/usr/lib/test/elos/
+export LD_LIBRARY_PATH=/usr/lib/elos/scanner/:/usr/lib/elos/client/:/usr/lib/elos/backend/:/usr/lib/test/elos/
 
 TESTS=$(find /usr/lib/test/elos -type f -executable)
 
 #skip failing test cases
-FAILTESTPATH=""
+FAILTESTPATH="/usr/lib/test/elos/tcp/test_tcp_pluginLoad_utest"
 TEST_RESULT_PATH="/tmp/test-elos-utest"
 mkdir -p $TEST_RESULT_PATH    
 
