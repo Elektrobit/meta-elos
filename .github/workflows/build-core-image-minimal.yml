@@ -46,12 +46,15 @@ jobs:
       - name: Setup meta-elos
         run: |
           echo 'MACHINE = "qemux86"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
+          echo 'PACKAGECONFIG:append:pn-elos = " daemon"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
           echo 'IMAGE_INSTALL += "elos-daemon"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
           echo 'BB_STRICT_CHECKSUM:forcevariable = "0"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
           echo 'BBLAYERS += "' $YOCTO_BUILD_PATH/meta-elos/ '"' >> $YOCTO_BUILD_PATH/build/conf/bblayers.conf
           echo 'BBLAYERS += "' $YOCTO_BUILD_PATH/meta-openembedded/meta-oe/ '"' >> $YOCTO_BUILD_PATH/build/conf/bblayers.conf
           echo 'BBLAYERS += "' $YOCTO_BUILD_PATH/meta-openembedded/meta-networking/ '"' >> $YOCTO_BUILD_PATH/build/conf/bblayers.conf
           echo 'BBLAYERS += "' $YOCTO_BUILD_PATH/meta-openembedded/meta-python/ '"' >> $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+          echo "########### local.conf to build ###################"
+          cat $YOCTO_BUILD_PATH/build/conf/bblayers.conf
 
 
       - name: create image
