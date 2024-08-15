@@ -27,7 +27,10 @@ inherit cmake pkgconfig
 
 EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
-DEPENDS += "json-c"
+DEPENDS += " \
+    json-c \
+    ${@bb.utils.contains('PACKAGECONFIG', 'mocks', 'cmocka-mocks', '', d)} \
+"
 
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 PACKAGECONFIG[mocks] = " \
