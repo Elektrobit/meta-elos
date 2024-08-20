@@ -89,10 +89,21 @@ Following plugins are added:
   * scanner_syslog
 
 ## elos demos
-To add the demos that are part of elos add `PACKAGECONFIG += "demos"` pull in the package "elos-demo".
+To add the demos that are part of elos, either add `PACKAGECONFIG += "demos"`
+to your `bbapend` file or add to your `local.conf` with
+`PACKAGECONFIG:append:pn-elos = " demos"`. In any case make sure to install the
+package:
+
 ```
 CORE_IMAGE_EXTRA_INSTALL += "elos-demos"
 ```
+.
+
+The `elos-demo` package depends on additional layers:
+
+* meta-openembedded/meta-oe/
+* meta-openembedded/meta-python/
+* meta-openembedded/meta-networking/
 
 Following demos are added:
 * demo_eloslog
