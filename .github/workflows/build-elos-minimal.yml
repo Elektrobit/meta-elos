@@ -36,8 +36,8 @@ jobs:
         run: |
           sudo locale-gen en_US.UTF-8
           mkdir -p $YOCTO_BUILD_PATH
-          git clone -b kirkstone git://git.yoctoproject.org/poky.git $YOCTO_BUILD_PATH/poky
-          git clone -b kirkstone https://github.com/openembedded/meta-openembedded.git $YOCTO_BUILD_PATH/meta-openembedded
+          git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git $YOCTO_BUILD_PATH/poky
+          git clone --depth 1 -b kirkstone https://github.com/openembedded/meta-openembedded.git $YOCTO_BUILD_PATH/meta-openembedded
           ln -s $(pwd) $YOCTO_BUILD_PATH/meta-elos
           
           cd $YOCTO_BUILD_PATH

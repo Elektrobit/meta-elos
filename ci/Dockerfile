@@ -47,8 +47,8 @@ ENV LC_ALL=en_US.UTF-8
 ENV DOCKERBUILD=1
 ENV BBCACHE="/home/ci/bbcache"
 
-RUN git clone -b kirkstone git://git.yoctoproject.org/poky.git /home/$USER/layers/poky/
-RUN git clone -b kirkstone git://git.openembedded.org/meta-openembedded /home/$USER/layers/meta-openembedded/
+RUN git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git /home/$USER/layers/poky/
+RUN git clone --depth 1 -b kirkstone git://git.openembedded.org/meta-openembedded /home/$USER/layers/meta-openembedded/
 
 RUN echo ". /home/$USER/layers/poky/oe-init-build-env /base/build >/dev/null" >> /home/$USER/.bashrc
 
