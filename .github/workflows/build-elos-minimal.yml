@@ -57,7 +57,6 @@ jobs:
         run: |
           cd $YOCTO_BUILD_PATH
           . poky/oe-init-build-env
-          # bitbake -n core-image-minimal
           bitbake-layers show-layers
           bitbake elos
 
