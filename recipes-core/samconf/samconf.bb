@@ -2,9 +2,9 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.53.4"
+SRC_VERSION = "0.56.3"
 SRC_GITREF = "branch=main"
-SRCREV = "e8768a7b36fb4b8f5de1b337c06b85c84811b3ac"
+SRCREV = "5fd459803bbbe672be2e2ae3efc4a5598a4c7e4a"
 
 #uncomment to build latest version
 #SRC_GITREF = "branch=main"
@@ -41,7 +41,7 @@ PACKAGECONFIG[mocks] = " \
 "
 
 do_install:append () {
-  sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/signature.sh
+  sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/samconf-sign
  
   # install integration
   install -d ${D}/${libdir}/test/${PN}-integration

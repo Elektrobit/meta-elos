@@ -2,6 +2,8 @@
 
 <img src="doc/static/elos_blue.svg" width=20% height=20% align="right">
 
+![Yocto workflow](https://github.com/Elektrobit/meta-elos/actions/workflows/build-core-image-minimal.yml/badge.svg)
+
 elos is a tool to collect, store and publish various system events (i.e. syslogs, core dumps, measurements obtained from proc- and sys-fs, …) while providing easy access to the collected data.
 
 
@@ -87,10 +89,21 @@ Following plugins are added:
   * scanner_syslog
 
 ## elos demos
-To add the demos that are part of elos add `PACKAGECONFIG += "demos"` pull in the package "elos-demo".
+To add the demos that are part of elos, either add `PACKAGECONFIG += "demos"`
+to your `bbapend` file or add to your `local.conf` with
+`PACKAGECONFIG:append:pn-elos = " demos"`. In any case make sure to install the
+package:
+
 ```
 CORE_IMAGE_EXTRA_INSTALL += "elos-demos"
 ```
+.
+
+The `elos-demo` package depends on additional layers:
+
+* meta-openembedded/meta-oe/
+* meta-openembedded/meta-python/
+* meta-openembedded/meta-networking/
 
 Following demos are added:
 * demo_eloslog

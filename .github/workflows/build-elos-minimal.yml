@@ -1,0 +1,68 @@
+
+name: Build core-image-minimal
+on: [ push, workflow_dispatch, pull_request ]
+
+env:
+  YOCTO_BUILD_PATH: /tmp/yocto-test-build/
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+          build-essential \
+          chrpath \
+          cpio \
+          diffstat \
+          file \
+          gawk \
+          git \
+          iproute2 \
+          iptables \
+          iputils-ping \
+          libncurses-dev \
+          locales \
+          lz4 \
+          python3 \
+          python3-distutils \
+          wget \
+          zstd
+
+      - name: setup yocto
+        run: |
+          sudo locale-gen en_US.UTF-8
+          mkdir -p $YOCTO_BUILD_PATH
+          git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git $YOCTO_BUILD_PATH/poky
+          git clone --depth 1 -b kirkstone https://github.com/openembedded/meta-openembedded.git $YOCTO_BUILD_PATH/meta-openembedded
+          ln -s $(pwd) $YOCTO_BUILD_PATH/meta-elos
+          
+          cd $YOCTO_BUILD_PATH
+          . poky/oe-init-build-env
+
+      - name: Setup meta-elos
+        run: |
+          echo 'MACHINE = "qemux86"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
+          echo 'PACKAGECONFIG:append:pn-elos = " daemon"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
+          echo 'IMAGE_INSTALL += "elos-daemon"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
+          echo 'BBLAYERS += "' $YOCTO_BUILD_PATH/meta-elos/ '"' >> $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+          echo "########### local.conf to build ###################"
+          cat $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+
+
+      - name: create image
+        run: |
+          cd $YOCTO_BUILD_PATH
+          . poky/oe-init-build-env
+          bitbake-layers show-layers
+          bitbake elos
+
+      - name: save yocto image artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Yocto image artefacts
+          path: $YOCTO_BUILD_PATH/build/tmp/deploy
+
