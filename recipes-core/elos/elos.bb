@@ -35,7 +35,12 @@ PACKAGES += "${PN}-common ${PN}-libplugin"
 FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
 
 
-EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release -DELOS_BUILD_DEFAULTS=off"
+EXTRA_OECMAKE=" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DELOS_BUILD_DEFAULTS=off \
+    -DELOS_LIBRARY_CPP=on \
+"
+
 DEPENDS += " \
   json-c \
   safu \
@@ -112,6 +117,7 @@ FILES:${PN}-common = " \
 "
 FILES:${PN} = " \
   ${libdir}/libelos.so* \
+  ${libdir}/libelos-cpp.so* \
   ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
 "
 RDEPENDS:${PN} += "${PN}-common"
