@@ -64,51 +64,19 @@ PACKAGECONFIG[mongodb] = " \
 "
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
-PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
-PACKAGECONFIG[smoketest] = ""
-PACKAGECONFIG[benchmark] = ""
-PACKAGECONFIG[integration] = ""
-
-ELOS_INSTALL_SMOKETESTS = "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', '${PN}-smoketest', '', d)}"
+PACKAGECONFIG[utests] = "-DUNIT_TESTS=on -DINSTALL_UNIT_TESTS=on,-DUNIT_TESTS=off -DINSTALL_UNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
+PACKAGECONFIG[smoketest] = "-DSMOKE_TESTS=on -DINSTALL_SMOKE_TESTS=on,-DSMOKE_TESTS=off -DINSTALL_SMOKE_TESTS=off,"
+PACKAGECONFIG[integration] = "-DINTEGRATION_TESTS=on -DINTEGRATION_TESTS=on,-DINTEGRATION_TESTS=off -DINSTALL_INTEGRATION_TESTS=off,"
+PACKAGECONFIG[benchmark] = "-DBENCHMARKS=on -DINSTALL_BENCHMARKS=on,-DBENCHMARKS=off -DINSTALL_BENCHMARKS=off,"
 
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
   install -D -m 0644 ${WORKDIR}/elosd.json ${D}/${sysconfdir}/elos
   install -D -m 0644 ${WORKDIR}/coredump.json ${D}/${sysconfdir}/elos
 
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'demos', False)} != "None" ]; then
+  if [ "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}" != '' ]; then
     install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
     install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
-  fi
-
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'utests', False)} != "None" ]; then
-    install -d ${D}/${libdir}/test/${PN}
-    # delete the unit tests folder if its empty to avoid yocot complaining
-    # when utest packageconfig is not set
-    rmdir ${D}/${libdir}/test/${PN} || true
-  fi
-
-  if [ ${@d.getVar('ELOS_INSTALL_SMOKETESTS', False)} ]; then
-      install -d ${D}/${libdir}/test/${PN}-smoketest
-      install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0755 ${S}/test/smoketest/smoketest_log.sh ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0755 ${S}/test/smoketest/smoketest_env.sh ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0644 ${S}/test/smoketest/config.json ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0644 ${S}/test/smoketest/config_dual.json ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0644 ${S}/test/smoketest/*.txt ${D}/${libdir}/test/${PN}-smoketest/
-      sed -i "s,/usr/lib/x86_64-linux-gnu/elos/backend,${libdir}/elos/backend," ${D}/${libdir}/test/${PN}-smoketest/config.json
-  fi
-
-
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'integration', False)} != "None" ]; then
-    install -d ${D}/${libdir}/test/${PN}-integration
-  fi
-
-
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'benchmark', False)} != "None" ]; then
-    install -d ${D}/${libdir}/test/${PN}-benchmark
-    install -m 0755 ${S}/test/benchmark/*.sh ${D}/${libdir}/test/${PN}-benchmark/
-    find ${D}/${libdir}/test/${PN}-benchmark/ -name "*.sh" -type f -exec sed -i 's,/bin/bash,/bin/sh,' {} \;
   fi
 }
 
@@ -157,15 +125,15 @@ FILES:${PN}-plugins = "${libdir}/elos"
 RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
 
 RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
-FILES:${PN}-smoketest = "${libdir}/test/${PN}-smoketest"
+FILES:${PN}-smoketest = "${libdir}/test/${PN}/smoketest"
 INSANE_SKIP:${PN}-smoketest += "staticdev"
 
 RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
-FILES:${PN}-integration = "${libdir}/test/${PN}-integration"
+FILES:${PN}-integration = "${libdir}/test/${PN}/integration"
 
 RDEPENDS:${PN}-benchmark += "${PN}-daemon ${PN}-tools ${PN}-plugins"
-FILES:${PN}-benchmark = "${libdir}/test/${PN}-benchmark"
+FILES:${PN}-benchmark = "${libdir}/test/${PN}/benchmark"
 
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
-FILES:${PN}-utest = "${libdir}/test/${PN}"
+FILES:${PN}-utest = "${libdir}/test/${PN}/utest"
 INSANE_SKIP:${PN}-utest += "staticdev"

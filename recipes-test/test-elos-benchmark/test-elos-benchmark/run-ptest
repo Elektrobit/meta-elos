@@ -5,7 +5,7 @@ export BENCHMARK_RESULT_DIR=/tmp/test-elos-benchmark
 export ELOS_SYSLOG_PATH=/dev/log
 
 
-TEST_RUNNER_DIR=/usr/lib/test/elos-benchmark
+TEST_RUNNER_DIR=/usr/lib/test/elos/benchmark
 
 crinit-ctl disable elosd
 crinit-ctl stop elosd
