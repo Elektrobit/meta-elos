@@ -2,9 +2,9 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.56.3"
+SRC_VERSION = "0.59.0"
 SRC_GITREF = "branch=main"
-SRCREV = "5fd459803bbbe672be2e2ae3efc4a5598a4c7e4a"
+SRCREV = "b57c103d58922707c759af069bc0bd0770d79f61"
 
 #uncomment to build latest version
 #SRC_GITREF = "branch=main"
