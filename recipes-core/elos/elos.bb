@@ -8,10 +8,8 @@ inherit cmake pkgconfig
 PV = "${SRC_VERSION}+git${SRCPV}"
 
 SRC_URI += " \
-    file://elosd.json \
     file://elos_valid_config.json \
     file://elos_invalid_config.json \
-    file://coredump.json \
     file://plugin_filter/elos_empty_plugin_filter.json \
     file://plugin_filter/elos_int_plugin_filter.json \
     file://plugin_filter/elos_missing_plugin_filter.json \
@@ -71,8 +69,6 @@ PACKAGECONFIG[benchmark] = "-DBENCHMARKS=on -DINSTALL_BENCHMARKS=on,-DBENCHMARKS
 
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
-  install -D -m 0644 ${WORKDIR}/elosd.json ${D}/${sysconfdir}/elos
-  install -D -m 0644 ${WORKDIR}/coredump.json ${D}/${sysconfdir}/elos
 
   if [ "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}" != '' ]; then
     install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
