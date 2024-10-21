@@ -36,6 +36,8 @@ FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
 EXTRA_OECMAKE=" \
     -DCMAKE_BUILD_TYPE=Release \
     -DELOS_BUILD_DEFAULTS=off \
+    -DELOS_COMMON=on \
+    -DELOS_LIBRARY=on \
     -DELOS_LIBRARY_CPP=on \
 "
 
