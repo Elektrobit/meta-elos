@@ -69,6 +69,53 @@ PACKAGECONFIG[smoketest] = "-DSMOKE_TESTS=on -DINSTALL_SMOKE_TESTS=on,-DSMOKE_TE
 PACKAGECONFIG[integration] = "-DINTEGRATION_TESTS=on -DINTEGRATION_TESTS=on,-DINTEGRATION_TESTS=off -DINSTALL_INTEGRATION_TESTS=off,"
 PACKAGECONFIG[benchmark] = "-DBENCHMARKS=on -DINSTALL_BENCHMARKS=on,-DBENCHMARKS=off -DINSTALL_BENCHMARKS=off,"
 
+
+edit_elos_config() {
+    _CONFIG_FILE="${1}"
+    _QUERY="${2}"
+    _CONFIG=$(jq "${_QUERY}" "${_CONFIG_FILE}")
+    echo "${_CONFIG}" > "${_CONFIG_FILE}"
+}
+
+_configure_smoketest() {
+    _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/config.json"
+
+    edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.UseEnv = true'
+
+    # Default log level is Debug, reduce verbosity
+    edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.LogLevel = "DEBUG"'
+
+    # Remove legacy port option
+    edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.Port)'
+
+    # Use none default port for smoketest
+	edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.LocalTcp.Config.Port = 54323'
+	edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.PublicTcpClient.Config.Port = 54324'
+
+    # Turn off unused backends
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.EventLogging.Plugins.SQLBackend)'
+    fi
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'dlt', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.EventLogging.Plugins.DLT)'
+    fi
+}
+
+_configure_elosd() {
+    ELOS_CONFIG_FILE="${D}/${sysconfdir}/elos/elosd.json"
+
+	# Default log level is Debug, reduce verbosity
+	edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.LogLevel = "ERROR"'
+
+    # Turn off unused backends
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${ELOS_CONFIG_FILE}" 'del(.root.elos.EventLogging.Plugins.SQLBackend)'
+    fi
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'dlt', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${ELOS_CONFIG_FILE}" 'del(.root.elos.EventLogging.Plugins.DLT)'
+    fi
+}
+
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
 
@@ -76,6 +123,9 @@ do_install:append () {
     install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
     install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
   fi
+
+  _configure_elosd
+  _configure_smoketest
 }
 
 FILES:${PN}-common = " \
