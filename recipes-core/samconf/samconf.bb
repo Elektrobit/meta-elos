@@ -7,8 +7,8 @@ SRC_GITREF = "branch=main"
 SRCREV = "b57c103d58922707c759af069bc0bd0770d79f61"
 
 #uncomment to build latest version
-#SRC_GITREF = "branch=main"
-#SRCREV = ${AUTOREV}
+SRC_GITREF = "branch=task/#25409-Fix_samconf_smoketest"
+SRCREV = "${AUTOREV}"
 
 
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
