@@ -2,13 +2,13 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.59.0"
+SRC_VERSION = "0.60.0"
 SRC_GITREF = "branch=main"
-SRCREV = "b57c103d58922707c759af069bc0bd0770d79f61"
+SRCREV = "38b2f8db09c31f48358d9f8f2d36e656d91e9221"
 
 #uncomment to build latest version
-SRC_GITREF = "branch=task/#25409-Fix_samconf_smoketest"
-SRCREV = "${AUTOREV}"
+# SRC_GITREF = "branch=main"
+# SRCREV = "${AUTOREV}"
 
 
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
