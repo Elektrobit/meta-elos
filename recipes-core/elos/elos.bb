@@ -127,7 +127,10 @@ do_install:append () {
   install -d ${D}/${sysconfdir}/elos
 
   _configure_elosd
-  _configure_smoketest
+
+  if [ "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', 'YES', 'NO', d)}" = 'YES' ]; then
+      _configure_smoketest
+  fi
 }
 
 FILES:${PN}-common = " \
