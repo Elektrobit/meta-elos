@@ -126,11 +126,6 @@ _configure_elosd() {
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
 
-  if [ "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}" != '' ]; then
-    install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
-    install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
-  fi
-
   _configure_elosd
   _configure_smoketest
 }
