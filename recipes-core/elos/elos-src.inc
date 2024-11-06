@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
-SRC_VERSION = "0.65.1"
+SRC_VERSION = "0.67.4"
 SRC_GITREF = "branch=main"
-SRCREV = "74082ce3b33b5eddd30b9ddc54ae6ca71762496d"
+SRCREV = "626323cb2062cd158dbef744c8ed2ccad0b295a3"
 
 #uncomment to build latest version
-SRC_GITREF = "branch=task/#25089-Install_smoke_and_integration_tests_via_cmake"
-SRCREV = "${AUTOREV}"
+# SRC_GITREF = "branch=integration"
+# SRCREV = "${AUTOREV}"
 
 ELOS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/elos.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
