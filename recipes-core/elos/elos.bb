@@ -164,8 +164,9 @@ FILES:${PN}-demos = " \
   ${bindir}/demo_eventbuffer \
   ${bindir}/demo_libelos_v2 \
   ${bindir}/demo_scanner_shmem \
-  ${bindir}/elos_log4c_demo \
   ${bindir}/elosMon \
+  ${bindir}/elos_log4c_demo \
+  ${bindir}/elosc-cpp \
   ${bindir}/syslog_example \
   ${bindir}/tinyElosc \
   ${libdir}/libeloslog4c.so* \
