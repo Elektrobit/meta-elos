@@ -8,10 +8,8 @@ inherit cmake pkgconfig
 PV = "${SRC_VERSION}+git${SRCPV}"
 
 SRC_URI += " \
-    file://elosd.json \
     file://elos_valid_config.json \
     file://elos_invalid_config.json \
-    file://coredump.json \
     file://plugin_filter/elos_empty_plugin_filter.json \
     file://plugin_filter/elos_int_plugin_filter.json \
     file://plugin_filter/elos_missing_plugin_filter.json \
@@ -35,19 +33,33 @@ PACKAGES += "${PN}-common ${PN}-libplugin"
 FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
 
 
-EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release -DELOS_BUILD_DEFAULTS=off"
+EXTRA_OECMAKE=" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DELOS_BUILD_DEFAULTS=off \
+    -DELOS_COMMON=on \
+    -DELOS_LIBRARY=on \
+    -DELOS_LIBRARY_CPP=on \
+"
+
 DEPENDS += " \
   json-c \
   safu \
   samconf \
   libmnl \
+  jq-native \
 "
 
 PACKAGECONFIG ?= "daemon tools plugins"
 
 PACKAGECONFIG[daemon] = "-DELOS_DAEMON=on,-DELOS_DAEMON=off"
 PACKAGECONFIG[tools] = "-DELOS_TOOLS=on,-DELOS_TOOLS=off"
-PACKAGECONFIG[plugins] = "-DELOS_PLUGINS=on,-DELOS_PLUGINS=off,sqlite3"
+PACKAGECONFIG[plugins] = "-DELOS_PLUGINS=on -DELOS_PLUGIN_LIBRARY=on,-DELOS_PLUGINS=off"
+PACKAGECONFIG[sql] = " \
+  -DELOSD_EVENTLOGGING_BACKEND_SQL=on, \
+  -DELOSD_EVENTLOGGING_BACKEND_SQL=off, \
+  sqlite3, \
+  sqlite3, \
+"
 PACKAGECONFIG[dlt] = " \
   -DELOSD_LIBDLT=on -DELOSD_EVENTLOGGING_BACKEND_DLT=on, \
   -DELOSD_LIBDLT=off -DELOSD_EVENTLOGGING_BACKEND_DLT=off \
@@ -59,51 +71,65 @@ PACKAGECONFIG[mongodb] = " \
 "
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
-PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
-PACKAGECONFIG[smoketest] = ""
-PACKAGECONFIG[benchmark] = ""
-PACKAGECONFIG[integration] = ""
+PACKAGECONFIG[utests] = "-DUNIT_TESTS=on -DINSTALL_UNIT_TESTS=on,-DUNIT_TESTS=off -DINSTALL_UNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
+PACKAGECONFIG[smoketest] = "-DSMOKE_TESTS=on -DINSTALL_SMOKE_TESTS=on,-DSMOKE_TESTS=off -DINSTALL_SMOKE_TESTS=off,"
+PACKAGECONFIG[integration] = "-DINTEGRATION_TESTS=on -DINTEGRATION_TESTS=on,-DINTEGRATION_TESTS=off -DINSTALL_INTEGRATION_TESTS=off,"
+PACKAGECONFIG[benchmark] = "-DBENCHMARKS=on -DINSTALL_BENCHMARKS=on,-DBENCHMARKS=off -DINSTALL_BENCHMARKS=off,"
 
-ELOS_INSTALL_SMOKETESTS = "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', '${PN}-smoketest', '', d)}"
+
+edit_elos_config() {
+    _CONFIG_FILE="${1}"
+    _QUERY="${2}"
+    _CONFIG=$(jq "${_QUERY}" "${_CONFIG_FILE}")
+    echo "${_CONFIG}" > "${_CONFIG_FILE}"
+}
+
+_configure_smoketest() {
+    _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/config.json"
+
+    edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.UseEnv = true'
+
+    # Default log level is Debug, reduce verbosity
+    edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.LogLevel = "DEBUG"'
+
+    # Remove legacy port option
+    edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.Port)'
+
+    # Use none default port for smoketest
+	edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.LocalTcp.Config.Port = 54323'
+	edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.PublicTcpClient.Config.Port = 54324'
+
+    # Turn off unused backends
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.EventLogging.Plugins.SQLBackend)'
+    fi
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'dlt', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.EventLogging.Plugins.DLT)'
+    fi
+}
+
+_configure_elosd() {
+    ELOS_CONFIG_FILE="${D}/${sysconfdir}/elos/elosd.json"
+
+	# Default log level is Debug, reduce verbosity
+	edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.LogLevel = "ERROR"'
+
+    # Turn off unused backends
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${ELOS_CONFIG_FILE}" 'del(.root.elos.EventLogging.Plugins.SQLBackend)'
+    fi
+    if [ "${@bb.utils.contains('PACKAGECONFIG', 'dlt', 'YES', 'NO', d)}" != 'YES' ]; then
+        edit_elos_config "${ELOS_CONFIG_FILE}" 'del(.root.elos.EventLogging.Plugins.DLT)'
+    fi
+}
 
 do_install:append () {
   install -d ${D}/${sysconfdir}/elos
-  install -D -m 0644 ${WORKDIR}/elosd.json ${D}/${sysconfdir}/elos
-  install -D -m 0644 ${WORKDIR}/coredump.json ${D}/${sysconfdir}/elos
 
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'demos', False)} != "None" ]; then
-    install -d ${D}/${sysconfdir}/elos/elos_log4c_demo
-    install -D -m 0644 ${S}/src/demos/elos_log4c_demo/log4crc ${D}/${sysconfdir}/elos/elos_log4c_demo
-  fi
+  _configure_elosd
 
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'utests', False)} != "None" ]; then
-    install -d ${D}/${libdir}/test/${PN}
-    # delete the unit tests folder if its empty to avoid yocot complaining
-    # when utest packageconfig is not set
-    rmdir ${D}/${libdir}/test/${PN} || true
-  fi
-
-  if [ ${@d.getVar('ELOS_INSTALL_SMOKETESTS', False)} ]; then
-      install -d ${D}/${libdir}/test/${PN}-smoketest
-      install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0755 ${S}/test/smoketest/smoketest_log.sh ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0755 ${S}/test/smoketest/smoketest_env.sh ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0644 ${S}/test/smoketest/config.json ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0644 ${S}/test/smoketest/config_dual.json ${D}/${libdir}/test/${PN}-smoketest/
-      install -m 0644 ${S}/test/smoketest/*.txt ${D}/${libdir}/test/${PN}-smoketest/
-      sed -i "s,/usr/lib/x86_64-linux-gnu/elos/backend,${libdir}/elos/backend," ${D}/${libdir}/test/${PN}-smoketest/config.json
-  fi
-
-
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'integration', False)} != "None" ]; then
-    install -d ${D}/${libdir}/test/${PN}-integration
-  fi
-
-
-  if [ ${@d.getVarFlag('PACKAGECONFIG', 'benchmark', False)} != "None" ]; then
-    install -d ${D}/${libdir}/test/${PN}-benchmark
-    install -m 0755 ${S}/test/benchmark/*.sh ${D}/${libdir}/test/${PN}-benchmark/
-    find ${D}/${libdir}/test/${PN}-benchmark/ -name "*.sh" -type f -exec sed -i 's,/bin/bash,/bin/sh,' {} \;
+  if [ "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', 'YES', 'NO', d)}" = 'YES' ]; then
+      _configure_smoketest
   fi
 }
 
@@ -112,6 +138,7 @@ FILES:${PN}-common = " \
 "
 FILES:${PN} = " \
   ${libdir}/libelos.so* \
+  ${libdir}/libelos-cpp.so* \
   ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
 "
 RDEPENDS:${PN} += "${PN}-common"
@@ -137,8 +164,9 @@ FILES:${PN}-demos = " \
   ${bindir}/demo_eventbuffer \
   ${bindir}/demo_libelos_v2 \
   ${bindir}/demo_scanner_shmem \
-  ${bindir}/elos_log4c_demo \
   ${bindir}/elosMon \
+  ${bindir}/elos_log4c_demo \
+  ${bindir}/elosc-cpp \
   ${bindir}/syslog_example \
   ${bindir}/tinyElosc \
   ${libdir}/libeloslog4c.so* \
@@ -151,15 +179,15 @@ FILES:${PN}-plugins = "${libdir}/elos"
 RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
 
 RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
-FILES:${PN}-smoketest = "${libdir}/test/${PN}-smoketest"
+FILES:${PN}-smoketest = "${libdir}/test/${PN}/smoketest"
 INSANE_SKIP:${PN}-smoketest += "staticdev"
 
 RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
-FILES:${PN}-integration = "${libdir}/test/${PN}-integration"
+FILES:${PN}-integration = "${libdir}/test/${PN}/integration"
 
 RDEPENDS:${PN}-benchmark += "${PN}-daemon ${PN}-tools ${PN}-plugins"
-FILES:${PN}-benchmark = "${libdir}/test/${PN}-benchmark"
+FILES:${PN}-benchmark = "${libdir}/test/${PN}/benchmark"
 
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
-FILES:${PN}-utest = "${libdir}/test/${PN}"
+FILES:${PN}-utest = "${libdir}/test/${PN}/utest"
 INSANE_SKIP:${PN}-utest += "staticdev"

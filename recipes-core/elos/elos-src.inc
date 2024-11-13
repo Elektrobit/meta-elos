@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
-SRC_VERSION = "0.62.6"
+SRC_VERSION = "0.67.4"
 SRC_GITREF = "branch=main"
-SRCREV = "245c2ef836a675aafa56dc8b71f265aab5d5c1b0"
+SRCREV = "626323cb2062cd158dbef744c8ed2ccad0b295a3"
 
 #uncomment to build latest version
-#SRC_GITREF = "branch=main"
-#SRCREV = ${AUTOREV}
+# SRC_GITREF = "branch=integration"
+# SRCREV = "${AUTOREV}"
 
 ELOS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/elos.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 

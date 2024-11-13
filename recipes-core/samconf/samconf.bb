@@ -2,13 +2,13 @@
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.56.3"
+SRC_VERSION = "0.60.0"
 SRC_GITREF = "branch=main"
-SRCREV = "5fd459803bbbe672be2e2ae3efc4a5598a4c7e4a"
+SRCREV = "38b2f8db09c31f48358d9f8f2d36e656d91e9221"
 
 #uncomment to build latest version
-#SRC_GITREF = "branch=main"
-#SRCREV = ${AUTOREV}
+# SRC_GITREF = "branch=main"
+# SRCREV = "${AUTOREV}"
 
 
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"

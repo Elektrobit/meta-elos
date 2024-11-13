@@ -9,5 +9,6 @@ BBLAYERS ?= " \
   /home/ci/layers/poky/meta \
   /home/ci/layers/poky/meta-poky \
   /home/ci/layers/poky/meta-yocto-bsp \
+  /home/ci/layers/meta-openembedded/meta-oe/ \
   /base/ \
   "
