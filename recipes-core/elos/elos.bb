@@ -167,6 +167,7 @@ FILES:${PN}-demos = " \
   ${bindir}/elosMon \
   ${bindir}/elos_log4c_demo \
   ${bindir}/elosc-cpp \
+  ${bindir}/elosc-publish-cpp \
   ${bindir}/syslog_example \
   ${bindir}/tinyElosc \
   ${libdir}/libeloslog4c.so* \
