@@ -7,15 +7,6 @@ inherit cmake pkgconfig
 
 PV = "${SRC_VERSION}+git${SRCPV}"
 
-SRC_URI += " \
-    file://elos_valid_config.json \
-    file://elos_invalid_config.json \
-    file://plugin_filter/elos_empty_plugin_filter.json \
-    file://plugin_filter/elos_int_plugin_filter.json \
-    file://plugin_filter/elos_missing_plugin_filter.json \
-    file://plugin_filter/elos_string_plugin_filter.json \
-"
-
 S = "${WORKDIR}/git"
 
 
