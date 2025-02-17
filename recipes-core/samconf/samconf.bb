@@ -10,10 +10,9 @@ SRCREV = "6aa1faa378eae932bb69710952261994b31a991b"
 # SRC_GITREF = "branch=main"
 # SRCREV = "${AUTOREV}"
 
-
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
-SRC_URI = " \
+SRC_URI = "\
     ${SAMCONF_SRC_REPO};${SRC_GITREF} \
 "
 
@@ -25,7 +24,6 @@ PACKAGES += "${PN}-integration"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
 
 inherit cmake pkgconfig
-
 
 EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
@@ -42,7 +40,6 @@ PACKAGECONFIG[mocks] = " \
 
 do_install:append () {
   sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/samconf-sign
- 
   # install integration
   install -d ${D}/${libdir}/test/${PN}-integration
   install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-integration/

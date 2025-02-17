@@ -9,7 +9,6 @@ PV = "${SRC_VERSION}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'daemon', '${PN}-daemon', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'tools', '${PN}-tools', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'plugins', '${PN}-plugins', '', d)}"
@@ -25,8 +24,7 @@ PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit',
 PACKAGES += "${PN}-common ${PN}-libplugin"
 FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
 
-
-EXTRA_OECMAKE=" \
+EXTRA_OECMAKE="\
     -DCMAKE_BUILD_TYPE=Release \
     -DELOS_BUILD_DEFAULTS=off \
     -DELOS_COMMON=on \
@@ -34,12 +32,12 @@ EXTRA_OECMAKE=" \
     -DELOS_LIBRARY_CPP=on \
 "
 
-DEPENDS += " \
-  json-c \
-  safu \
-  samconf \
-  libmnl \
-  jq-native \
+DEPENDS += "\
+    json-c \
+    safu \
+    samconf \
+    libmnl \
+    jq-native \
 "
 
 PACKAGECONFIG ?= "daemon tools plugins \
@@ -81,7 +79,6 @@ PACKAGECONFIG[sysvinit] = " \
   , \
 "
 
-
 edit_elos_config() {
     _CONFIG_FILE="${1}"
     _QUERY="${2}"
@@ -101,8 +98,8 @@ _configure_smoketest() {
     edit_elos_config "${_SMOKETEST_CONFIG}" 'del(.root.elos.Port)'
 
     # Use none default port for smoketest
-	edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.LocalTcp.Config.Port = 54323'
-	edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.PublicTcpClient.Config.Port = 54324'
+    edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.LocalTcp.Config.Port = 54323'
+    edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.PublicTcpClient.Config.Port = 54324'
 
     # Turn off unused backends
     if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
@@ -116,12 +113,12 @@ _configure_smoketest() {
 _configure_elosd() {
     ELOS_CONFIG_FILE="${D}/${sysconfdir}/elos/elosd.json"
 
-	# Default log level is Debug, reduce verbosity
-	edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.LogLevel = "ERROR"'
+    # Default log level is Debug, reduce verbosity
+    edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.LogLevel = "ERROR"'
 
     # By default, the config sets /tmp/elosd/elosd.socket as the socket path.
     # /run is more appropriate and also the default in elosc.
-	edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.ClientInputs.Plugins.unixClient.Config.path = "/run/elosd/elosd.socket"'
+    edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.ClientInputs.Plugins.unixClient.Config.path = "/run/elosd/elosd.socket"'
 
     # Turn off unused backends
     if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
@@ -142,12 +139,12 @@ do_install:append () {
   fi
 }
 
-FILES:${PN}-common = " \
-  ${libdir}/libelos_common.so* \
+FILES:${PN}-common = "\
+    ${libdir}/libelos_common.so* \
 "
-FILES:${PN} = " \
-  ${libdir}/libelos.so* \
-  ${libdir}/libelos-cpp.so* \
+FILES:${PN} = "\
+    ${libdir}/libelos.so* \
+    ${libdir}/libelos-cpp.so* \
   ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
 "
 RDEPENDS:${PN} += "${PN}-common"
@@ -155,32 +152,32 @@ RDEPENDS:${PN} += "${PN}-common"
 FILES:${PN}-libplugin = "${libdir}/libelosplugin.so*"
 RDEPENDS:${PN}-libplugin += "${PN}-common"
 
-FILES:${PN}-daemon = " \
-  ${sysconfdir}/elos/elosd.json \
-  ${bindir}/elosd \
+FILES:${PN}-daemon = "\
+    ${sysconfdir}/elos/elosd.json \
+    ${bindir}/elosd \
 "
 RDEPENDS:${PN}-daemon += "${PN}-common"
 
-FILES:${PN}-tools = " \
-  ${bindir}/elosc \
-  ${bindir}/elos-coredump \
-  ${sysconfdir}/elos/coredump.json \
+FILES:${PN}-tools = "\
+    ${bindir}/elosc \
+    ${bindir}/elos-coredump \
+    ${sysconfdir}/elos/coredump.json \
 "
 RDEPENDS:${PN}-tools += "${PN}-common"
 
-FILES:${PN}-demos = " \
-  ${bindir}/demo_eloslog \
-  ${bindir}/demo_eventbuffer \
-  ${bindir}/demo_libelos_v2 \
-  ${bindir}/demo_scanner_shmem \
-  ${bindir}/elosMon \
-  ${bindir}/elos_log4c_demo \
-  ${bindir}/elosc-cpp \
-  ${bindir}/elosc-publish-cpp \
-  ${bindir}/syslog_example \
-  ${bindir}/tinyElosc \
-  ${libdir}/libeloslog4c.so* \
-  ${sysconfdir}/elos/elos_log4c_demo \
+FILES:${PN}-demos = "\
+    ${bindir}/demo_eloslog \
+    ${bindir}/demo_eventbuffer \
+    ${bindir}/demo_libelos_v2 \
+    ${bindir}/demo_scanner_shmem \
+    ${bindir}/elosMon \
+    ${bindir}/elos_log4c_demo \
+    ${bindir}/elosc-cpp \
+    ${bindir}/elosc-publish-cpp \
+    ${bindir}/syslog_example \
+    ${bindir}/tinyElosc \
+    ${libdir}/libeloslog4c.so* \
+    ${sysconfdir}/elos/elos_log4c_demo \
   ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${bindir}/elosDlt', '', d)} \
 "
 RDEPENDS:${PN}-demos += "${PN}-common"
@@ -213,8 +210,8 @@ RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'syste
 INITSCRIPT_NAME:${PN}-sysvinit = "elosd"
 INITSCRIPT_PARAMS:${PN}-sysvinit = "start 05 5 2 . stop 95 0 1 6 ."
 INITSCRIPT_PACKAGES = "${PN}-sysvinit"
-FILES:${PN}-sysvinit = " \
-  ${sysconfdir}/init.d/elosd \
+FILES:${PN}-sysvinit = "\
+    ${sysconfdir}/init.d/elosd \
 "
 RDEPENDS:${PN}-sysvinit += "${PN}-daemon ${PN}-plugins"
 RCONFLICTS:${PN}-sysvinit = "busybox-syslog sysklogd syslog-ng rsyslog"

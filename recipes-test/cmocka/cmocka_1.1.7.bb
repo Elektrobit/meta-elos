@@ -9,8 +9,8 @@ SRC_GITREF = "branch=stable-1.1;tag=cmocka-1.1.7"
 #SRC_GITREF = "branch=master"
 #SRCREV = "${AUTOREV}"
 
-SRC_URI = " \
-  git://gitlab.com/cmocka/cmocka.git;protocol=https;${SRC_GITREF} \
+SRC_URI = "\
+    git://gitlab.com/cmocka/cmocka.git;protocol=https;${SRC_GITREF} \
 "
 
 PV = "${SRC_VERSION}+git${SRCPV}"
