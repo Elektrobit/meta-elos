@@ -6,10 +6,6 @@ SRC_VERSION = "0.61.1"
 SRC_GITREF = "branch=main"
 SRCREV = "6aa1faa378eae932bb69710952261994b31a991b"
 
-#uncomment to build latest version
-# SRC_GITREF = "branch=main"
-# SRCREV = "${AUTOREV}"
-
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
 SRC_URI = "\

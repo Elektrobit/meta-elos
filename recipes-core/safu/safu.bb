@@ -6,10 +6,6 @@ SRC_VERSION = "0.60.1"
 SRC_GITREF = "branch=main"
 SRCREV = "0f8d2ac43f0256182b5ead1cde7c49d47c790e63"
 
-#uncomment to build latest version
-#SRC_GITREF = "branch=main"
-#SRCREV = ${AUTOREV}
-
 SAFU_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/safu.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
 SRC_URI = "\

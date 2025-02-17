@@ -6,10 +6,6 @@ SRC_VERSION = "0.55.2"
 SRC_GITREF = "branch=main"
 SRCREV = "132174585718cef84f390b2121e85d64de91493a"
 
-#uncomment to build latest version
-#SRC_GITREF = "branch=main"
-#SRCREV = "${AUTOREV}"
-
 CMOCKA_MOCKS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/cmocka_mocks.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
 SRC_URI = "\
