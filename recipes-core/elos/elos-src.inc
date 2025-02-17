@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: MIT
-SRC_VERSION = "1.6.1"
-SRC_GITREF = "branch=main;tag=elos-1.6.1"
+SRC_VERSION = "1.14.3"
+SRC_GITREF = "branch=main"
+SRCREV = "fe420ceb10312ef804b92405e4b4956ab62dba61"
 
 #uncomment to build latest version
 # SRC_GITREF = "branch=integration"

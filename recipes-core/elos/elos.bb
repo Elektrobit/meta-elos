@@ -3,7 +3,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 require elos-src.inc
-inherit cmake pkgconfig
+inherit cmake pkgconfig update-rc.d systemd
 
 PV = "${SRC_VERSION}+git${SRCPV}"
 
@@ -19,6 +19,8 @@ PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', 
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', '${PN}-smoketest', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'integration', '${PN}-integration', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'benchmark', '${PN}-benchmark', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
 
 PACKAGES += "${PN}-common ${PN}-libplugin"
 FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
@@ -40,7 +42,10 @@ DEPENDS += " \
   jq-native \
 "
 
-PACKAGECONFIG ?= "daemon tools plugins"
+PACKAGECONFIG ?= "daemon tools plugins \
+  ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
+  ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'sysvinit', '', d)} \
+"
 
 PACKAGECONFIG[daemon] = "-DELOS_DAEMON=on,-DELOS_DAEMON=off"
 PACKAGECONFIG[tools] = "-DELOS_TOOLS=on,-DELOS_TOOLS=off"
@@ -66,6 +71,15 @@ PACKAGECONFIG[utests] = "-DUNIT_TESTS=on -DINSTALL_UNIT_TESTS=on,-DUNIT_TESTS=of
 PACKAGECONFIG[smoketest] = "-DSMOKE_TESTS=on -DINSTALL_SMOKE_TESTS=on,-DSMOKE_TESTS=off -DINSTALL_SMOKE_TESTS=off,"
 PACKAGECONFIG[integration] = "-DINTEGRATION_TESTS=on -DINTEGRATION_TESTS=on,-DINTEGRATION_TESTS=off -DINSTALL_INTEGRATION_TESTS=off,"
 PACKAGECONFIG[benchmark] = "-DBENCHMARKS=on -DINSTALL_BENCHMARKS=on,-DBENCHMARKS=off -DINSTALL_BENCHMARKS=off,"
+PACKAGECONFIG[systemd] = " \
+  -DELOSD_SYSTEMD=on -DINSTALL_ELOSD_SYSTEMD_UNIT_DIR=${systemd_system_unitdir}, \
+  -DELOSD_SYSTEMD=off, \
+  systemd \
+"
+PACKAGECONFIG[sysvinit] = " \
+  -DINSTALL_ELOSD_SYSVINIT_SCRIPT=on -DINSTALL_ELOSD_SYSVINIT_SCRIPT_DIR=${sysconfdir}/init.d, \
+  , \
+"
 
 
 edit_elos_config() {
@@ -104,6 +118,10 @@ _configure_elosd() {
 
 	# Default log level is Debug, reduce verbosity
 	edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.LogLevel = "ERROR"'
+
+    # By default, the config sets /tmp/elosd/elosd.socket as the socket path.
+    # /run is more appropriate and also the default in elosc.
+	edit_elos_config "${ELOS_CONFIG_FILE}" '.root.elos.ClientInputs.Plugins.unixClient.Config.path = "/run/elosd/elosd.socket"'
 
     # Turn off unused backends
     if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
@@ -183,3 +201,21 @@ FILES:${PN}-benchmark = "${libdir}/test/${PN}/benchmark"
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
 FILES:${PN}-utest = "${libdir}/test/${PN}/utest"
 INSANE_SKIP:${PN}-utest += "staticdev"
+
+SYSTEMD_AUTO_ENABLE = "enable"
+SYSTEMD_PACKAGES = "${PN}-systemd"
+SYSTEMD_SERVICE:${PN}-systemd = "elosd.service"
+FILES:${PN}-systemd = "${systemd_unitdir}/system/elosd.service"
+RDEPENDS:${PN}-systemd += "${PN}-daemon ${PN}-plugins"
+RCONFLICTS:${PN}-systemd = "busybox-syslog sysklogd syslog-ng rsyslog"
+RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '', d)}"
+
+INITSCRIPT_NAME:${PN}-sysvinit = "elosd"
+INITSCRIPT_PARAMS:${PN}-sysvinit = "start 05 5 2 . stop 95 0 1 6 ."
+INITSCRIPT_PACKAGES = "${PN}-sysvinit"
+FILES:${PN}-sysvinit = " \
+  ${sysconfdir}/init.d/elosd \
+"
+RDEPENDS:${PN}-sysvinit += "${PN}-daemon ${PN}-plugins"
+RCONFLICTS:${PN}-sysvinit = "busybox-syslog sysklogd syslog-ng rsyslog"
+RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"

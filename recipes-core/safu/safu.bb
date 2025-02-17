@@ -3,7 +3,8 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
 SRC_VERSION = "0.60.1"
-SRC_GITREF = "branch=main;tag=safu-0.60.1"
+SRC_GITREF = "branch=main"
+SRCREV = "0f8d2ac43f0256182b5ead1cde7c49d47c790e63"
 
 #uncomment to build latest version
 #SRC_GITREF = "branch=main"

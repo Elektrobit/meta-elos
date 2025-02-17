@@ -29,6 +29,9 @@ fi
 localconf="$BASEDIR/build/conf/local.conf"
 mkdir -p "$(dirname "$localconf")"
 cp "$BASEDIR/ci/local.conf" "$localconf"
+if [ "$USE_SYSTEMD" = "1" ]; then
+    echo 'INIT_MANAGER = "systemd"' >> "$localconf"
+fi
 
 bblayersconf="$BASEDIR/build/conf/bblayers.conf"
 mkdir -p "$(dirname "$bblayersconf")"
