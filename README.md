@@ -20,6 +20,9 @@ For instructions on using elos, please see
 To quickly build a minimal image with elos installed run `ci/docker-run.sh` to enter a docker container with the build environment.
 And then run `bitbake core-image-minimal` to build the image and `runqemu nographic` to run it.
 
+The image by default uses `sysvinit` as the init system. To use `systemd` instead, set the `USE_SYSTEMD` option to 1:
+`USE_SYSTEMD=1 ci/docker-run.sh`.
+
 ## Elos source repository
 
 The repositories used to pull elos and its dependencies are set using the "META_ELOS_SRC_REPO_BASE" and "META_ELOS_SRC_REPO_PROTOCOL_PARAM" variables under `conf/layer.conf`. The default location
