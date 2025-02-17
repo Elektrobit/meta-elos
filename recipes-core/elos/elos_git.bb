@@ -1,13 +1,38 @@
 # SPDX-License-Identifier: MIT
-LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+SUMMARY = "elos event logger"
+DESCRIPTION = "elos is a tool to collect, store and publish various system events (i.e. syslogs, core dumps, measurements obtained from proc- and sys-fs, …) while providing easy access to the collected data."
 
-require elos-src.inc
+HOMEPAGE = "https://elos-logger.org"
+
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=894bdc0a9e667e7c417fe1e24a0566b8"
+
 inherit cmake pkgconfig update-rc.d systemd
 
+DEPENDS += "\
+    jq-native \
+    json-c \
+    libmnl \
+    safu \
+    samconf \
+"
+
+ELOS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/elos.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
+
+SRC_VERSION = "1.14.3"
 PV = "${SRC_VERSION}+git${SRCPV}"
+SRC_GITREF = "branch=main"
+SRC_URI = "\
+    ${ELOS_SRC_REPO};${SRC_GITREF} \
+"
+SRCREV = "fe420ceb10312ef804b92405e4b4956ab62dba61"
 
 S = "${WORKDIR}/git"
+
+PACKAGECONFIG ?= "daemon tools plugins \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'sysvinit', '', d)} \
+"
 
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'daemon', '${PN}-daemon', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'tools', '${PN}-tools', '', d)}"
@@ -24,25 +49,12 @@ PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit',
 PACKAGES += "${PN}-common ${PN}-libplugin"
 FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
 
-EXTRA_OECMAKE="\
+EXTRA_OECMAKE = "\
     -DCMAKE_BUILD_TYPE=Release \
     -DELOS_BUILD_DEFAULTS=off \
     -DELOS_COMMON=on \
     -DELOS_LIBRARY=on \
     -DELOS_LIBRARY_CPP=on \
-"
-
-DEPENDS += "\
-    json-c \
-    safu \
-    samconf \
-    libmnl \
-    jq-native \
-"
-
-PACKAGECONFIG ?= "daemon tools plugins \
-  ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
-  ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'sysvinit', '', d)} \
 "
 
 PACKAGECONFIG[daemon] = "-DELOS_DAEMON=on,-DELOS_DAEMON=off"
@@ -145,7 +157,7 @@ FILES:${PN}-common = "\
 FILES:${PN} = "\
     ${libdir}/libelos.so* \
     ${libdir}/libelos-cpp.so* \
-  ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
 "
 RDEPENDS:${PN} += "${PN}-common"
 
@@ -204,8 +216,8 @@ SYSTEMD_PACKAGES = "${PN}-systemd"
 SYSTEMD_SERVICE:${PN}-systemd = "elosd.service"
 FILES:${PN}-systemd = "${systemd_unitdir}/system/elosd.service"
 RDEPENDS:${PN}-systemd += "${PN}-daemon ${PN}-plugins"
-RCONFLICTS:${PN}-systemd = "busybox-syslog sysklogd syslog-ng rsyslog"
 RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '', d)}"
+RCONFLICTS:${PN}-systemd = "busybox-syslog sysklogd syslog-ng rsyslog"
 
 INITSCRIPT_NAME:${PN}-sysvinit = "elosd"
 INITSCRIPT_PARAMS:${PN}-sysvinit = "start 05 5 2 . stop 95 0 1 6 ."
@@ -214,5 +226,5 @@ FILES:${PN}-sysvinit = "\
     ${sysconfdir}/init.d/elosd \
 "
 RDEPENDS:${PN}-sysvinit += "${PN}-daemon ${PN}-plugins"
-RCONFLICTS:${PN}-sysvinit = "busybox-syslog sysklogd syslog-ng rsyslog"
 RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
+RCONFLICTS:${PN}-sysvinit = "busybox-syslog sysklogd syslog-ng rsyslog"
