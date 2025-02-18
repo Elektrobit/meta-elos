@@ -21,9 +21,12 @@ PV = "${SRC_VERSION}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
-
 inherit cmake pkgconfig
+
+PACKAGES =+ " \
+    ${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks ${PN}-mocks-dev', '', d)} \
+"
 
 EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
@@ -39,7 +42,14 @@ PACKAGECONFIG[mocks] = " \
     cmocka cmocka-extensions \
 "
 
-FILES:${PN} += "/usr/lib/${PN}"
-
 FILES:${PN}-utest += "/usr/lib/test/${PN}"
 INSANE_SKIP:${PN}-utest += "staticdev"
+
+FILES:${PN}-mocks += " \
+    ${libdir}/libmock_${PN}.so.* \
+"
+
+FILES:${PN}-mocks-dev += " \
+    ${libdir}/libmock_${PN}.so \
+    ${libdir}/cmake/${PN}/mock_${PN}* \
+"

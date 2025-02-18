@@ -12,8 +12,10 @@ INHIBIT_DEFAULT_DEPS = "1"
 
 inherit ptest
 
-RDEPENDS:${PN} += "elos-benchmark jq"
+RDEPENDS:${PN}-ptest += "elos-benchmark jq"
 
-do_install() {
+RDEPENDS:${PN} += "${PN}-ptest"
+ALLOW_EMPTY:${PN} = "1"
+do_install_ptest() {
     install -D ${WORKDIR}/run-ptest ${D}${PTEST_PATH}/run-ptest
 }

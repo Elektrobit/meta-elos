@@ -22,7 +22,10 @@ PV = "${SRC_VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
 
 PACKAGES += "${PN}-integration"
-PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
+PACKAGES =+ " \
+    ${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks ${PN}-mocks-dev', '', d)} \
+"
 
 inherit cmake pkgconfig
 
@@ -58,3 +61,12 @@ FILES:${PN}-utest += "/usr/lib/test/${PN}"
 FILES:${PN}-integration += "/usr/lib/test/${PN}-integration"
 INSANE_SKIP:${PN}-utest += "staticdev"
 INSANE_SKIP:${PN}-integration += "staticdev"
+
+FILES:${PN}-mocks += " \
+    ${libdir}/libmock_${PN}.so.* \
+"
+
+FILES:${PN}-mocks-dev += " \
+    ${libdir}/libmock_${PN}.so \
+    ${libdir}/cmake/${PN}/mock_${PN}* \
+"

@@ -29,7 +29,10 @@ SRCREV = "fe420ceb10312ef804b92405e4b4956ab62dba61"
 
 S = "${WORKDIR}/git"
 
-PACKAGECONFIG ?= "daemon tools plugins \
+PACKAGECONFIG ?= "\
+    daemon \
+    tools \
+    plugins \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'sysvinit', '', d)} \
 "
@@ -47,7 +50,6 @@ PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
 
 PACKAGES += "${PN}-common ${PN}-libplugin"
-FEATURE_PACKAGES_ptest-pkgs += "utest smoketest integration benchmark"
 
 EXTRA_OECMAKE = "\
     -DCMAKE_BUILD_TYPE=Release \
@@ -197,9 +199,16 @@ RDEPENDS:${PN}-demos += "${PN}-common"
 FILES:${PN}-plugins = "${libdir}/elos"
 RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
 
-RDEPENDS:${PN}-smoketest += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
+RDEPENDS:${PN}-smoketest += " \
+    ${PN}-daemon \
+    ${PN}-tools \
+    ${PN}-demos \
+    ${PN}-plugins \
+    coreutils \
+    procps \
+    ${@bb.utils.contains('PACKAGECONFIG', 'systemd', 'socat', '', d)} \
+"
 FILES:${PN}-smoketest = "${libdir}/test/${PN}/smoketest"
-INSANE_SKIP:${PN}-smoketest += "staticdev"
 
 RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
 FILES:${PN}-integration = "${libdir}/test/${PN}/integration"
@@ -209,7 +218,7 @@ FILES:${PN}-benchmark = "${libdir}/test/${PN}/benchmark"
 
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
 FILES:${PN}-utest = "${libdir}/test/${PN}/utest"
-INSANE_SKIP:${PN}-utest += "staticdev"
+RDEPENDS:${PN}-utest += "safu-mocks samconf-mocks"
 
 SYSTEMD_AUTO_ENABLE = "enable"
 SYSTEMD_PACKAGES = "${PN}-systemd"
