@@ -44,8 +44,6 @@ PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', '${PN}-smoketest', '', d)}"
-PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'integration', '${PN}-integration', '', d)}"
-PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'benchmark', '${PN}-benchmark', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
 
@@ -81,8 +79,6 @@ PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on -DINSTALL_UNIT_TESTS=on,-DUNIT_TESTS=off -DINSTALL_UNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 PACKAGECONFIG[smoketest] = "-DSMOKE_TESTS=on -DINSTALL_SMOKE_TESTS=on,-DSMOKE_TESTS=off -DINSTALL_SMOKE_TESTS=off,"
-PACKAGECONFIG[integration] = "-DINTEGRATION_TESTS=on -DINTEGRATION_TESTS=on,-DINTEGRATION_TESTS=off -DINSTALL_INTEGRATION_TESTS=off,"
-PACKAGECONFIG[benchmark] = "-DBENCHMARKS=on -DINSTALL_BENCHMARKS=on,-DBENCHMARKS=off -DINSTALL_BENCHMARKS=off,"
 PACKAGECONFIG[systemd] = " \
   -DELOSD_SYSTEMD=on -DINSTALL_ELOSD_SYSTEMD_UNIT_DIR=${systemd_system_unitdir}, \
   -DELOSD_SYSTEMD=off, \
@@ -209,12 +205,6 @@ RDEPENDS:${PN}-smoketest += " \
     ${@bb.utils.contains('PACKAGECONFIG', 'systemd', 'socat', '', d)} \
 "
 FILES:${PN}-smoketest = "${libdir}/test/${PN}/smoketest"
-
-RDEPENDS:${PN}-integration += "${PN}-daemon ${PN}-tools ${PN}-demos ${PN}-plugins"
-FILES:${PN}-integration = "${libdir}/test/${PN}/integration"
-
-RDEPENDS:${PN}-benchmark += "${PN}-daemon ${PN}-tools ${PN}-plugins"
-FILES:${PN}-benchmark = "${libdir}/test/${PN}/benchmark"
 
 FILES:${PN}-mocks = "${libdir}/libmock_libelos.so*"
 FILES:${PN}-utest = "${libdir}/test/${PN}/utest"
