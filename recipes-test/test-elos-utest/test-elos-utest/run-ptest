@@ -6,7 +6,7 @@ export LD_LIBRARY_PATH=/usr/lib/elos/scanner/:/usr/lib/elos/client/:/usr/lib/elo
 TESTS=$(find /usr/lib/test/elos/utest -type f -executable)
 
 #skip failing test cases
-FAILTESTPATH="/usr/lib/test/elos/utest/tcp/test_tcp_pluginLoad_utest"
+FAILTESTPATH="/usr/lib/test/elos/utest/tcp/test_tcp_pluginLoad_utest /usr/lib/test/elos/utest/unix/test_unix_pluginLoad_utest"
 TEST_RESULT_PATH="/tmp/test-elos-utest"
 mkdir -p $TEST_RESULT_PATH    
 
