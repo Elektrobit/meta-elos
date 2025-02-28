@@ -1,4 +1,9 @@
 # SPDX-License-Identifier: MIT
+SUMMARY = "Library for onfiguration option management."
+DESCRIPTION = "Library to securely manage program configuration options, used by elos."
+
+HOMEPAGE = "https://elos-logger.org"
+
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
@@ -6,14 +11,9 @@ SRC_VERSION = "0.61.1"
 SRC_GITREF = "branch=main"
 SRCREV = "6aa1faa378eae932bb69710952261994b31a991b"
 
-#uncomment to build latest version
-# SRC_GITREF = "branch=main"
-# SRCREV = "${AUTOREV}"
-
-
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
-SRC_URI = " \
+SRC_URI = "\
     ${SAMCONF_SRC_REPO};${SRC_GITREF} \
 "
 
@@ -22,10 +22,12 @@ PV = "${SRC_VERSION}+git${SRCPV}"
 S = "${WORKDIR}/git"
 
 PACKAGES += "${PN}-integration"
-PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
+PACKAGES =+ " \
+    ${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)} \
+    ${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks ${PN}-mocks-dev', '', d)} \
+"
 
 inherit cmake pkgconfig
-
 
 EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
@@ -42,7 +44,6 @@ PACKAGECONFIG[mocks] = " \
 
 do_install:append () {
   sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/samconf-sign
- 
   # install integration
   install -d ${D}/${libdir}/test/${PN}-integration
   install -m 0755 ${S}/test/smoketest/smoketest.sh ${D}/${libdir}/test/${PN}-integration/
@@ -60,3 +61,12 @@ FILES:${PN}-utest += "/usr/lib/test/${PN}"
 FILES:${PN}-integration += "/usr/lib/test/${PN}-integration"
 INSANE_SKIP:${PN}-utest += "staticdev"
 INSANE_SKIP:${PN}-integration += "staticdev"
+
+FILES:${PN}-mocks += " \
+    ${libdir}/libmock_${PN}.so.* \
+"
+
+FILES:${PN}-mocks-dev += " \
+    ${libdir}/libmock_${PN}.so \
+    ${libdir}/cmake/${PN}/mock_${PN}* \
+"

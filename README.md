@@ -174,22 +174,12 @@ For `test-safu-utest` the `PACKAGECONFIG` option "utests" needs to be set for sa
 For `test-samconf-utest` the `PACKAGECONFIG` option "utests" need to to be set for samconf,
 and the option "mocks" for safu.
 
-### Integration tests
+#### Integration tests of samconf
 
-Integration tests to verify that elos works on the target as expected can be added this way:
-
-```
-CORE_IMAGE_EXTRA_INSTALL += "elos-integration"
-```
-
-The integratin tests need the `PACKAGECONFIG` options "daemon", "tools" and "plugins" to be set.
-
-#### Integration tests of samconf, safu
-
-The integration tests for samconf and safu are added like this:
+The integration tests for samconf are added like this:
 
 ```
-CORE_IMAGE_EXTRA_INSTALL += "test-safu-integration test-samconf-integration"
+CORE_IMAGE_EXTRA_INSTALL += "test-samconf-integration"
 ```
 
 
@@ -202,16 +192,6 @@ CORE_IMAGE_EXTRA_INSTALL += "elos-smoketests"
 ```
 
 These tests should be run in a CI.
-
-### Benchmarks
-
-Benchmarking of elos is possible with following addition:
-
-```
-CORE_IMAGE_EXTRA_INSTALL += "elos-benchmarks"
-```
-
-
 
 
 ## License

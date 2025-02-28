@@ -6,13 +6,9 @@ SRC_VERSION = "0.54.1"
 SRC_GITREF = "branch=main"
 SRCREV = "727020111fbade30a9b934cb5f5521318ca182ac"
 
-#uncomment to build latest version
-#SRC_GITREF = "branch=main"
-#SRCREV = "${AUTOREV}"
-
 CMOCKA_EXT_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/cmocka_extensions.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
-SRC_URI = " \
+SRC_URI = "\
     ${CMOCKA_EXT_SRC_REPO};${SRC_GITREF} \
 "
 
