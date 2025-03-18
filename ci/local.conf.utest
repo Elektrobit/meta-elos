@@ -15,7 +15,7 @@ BB_DISKMON_DIRS ??= "\
     HALT,/tmp,10M,1K"
 PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
 CONF_VERSION = "2"
-DISTRO_FEATURES = ""
+DISTRO_FEATURES = "ptest"
 PACKAGECONFIG:append:pn-elos = " daemon demos utests"
 PACKAGECONFIG:append:pn-safu = " mocks"
 PACKAGECONFIG:append:pn-samconf = " utests mocks"
