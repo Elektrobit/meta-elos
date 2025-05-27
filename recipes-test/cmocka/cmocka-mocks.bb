@@ -4,9 +4,9 @@ DESCRIPTION = "cmocka mocks for common system libraries - used in the elos integ
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.55.9"
+SRC_VERSION = "0.56.0"
 SRC_GITREF = "branch=main"
-SRCREV = "1d85e4548b9939f09576904f247a73aae987c031"
+SRCREV = "52f6b5939be7fc26a055d64a2f996e3180371bd8"
 
 CMOCKA_MOCKS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/cmocka_mocks.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
