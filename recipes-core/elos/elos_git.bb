@@ -92,7 +92,7 @@ edit_elos_config() {
 }
 
 _configure_smoketest() {
-    _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/config.json"
+    _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/elosd.json"
 
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.UseEnv = true'
 
