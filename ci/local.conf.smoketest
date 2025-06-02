@@ -16,5 +16,5 @@ BB_DISKMON_DIRS ??= "\
 PACKAGECONFIG:append:pn-qemu-system-native = " sdl"
 CONF_VERSION = "2"
 DISTRO_FEATURES = "ptest"
-PACKAGECONFIG:append:pn-elos = " daemon demos smoketest"
+PACKAGECONFIG:append:pn-elos = " daemon demos smoketest dlt"
 CORE_IMAGE_EXTRA_INSTALL += "elos elos-daemon elos-plugins elos-demos test-elos-smoketest"
