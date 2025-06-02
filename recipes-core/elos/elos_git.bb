@@ -93,6 +93,7 @@ edit_elos_config() {
 
 _configure_smoketest() {
     _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/elosd.json"
+    _SMOKETEST_ENV="${D}/${libdir}/test/elos/smoketest/smoketest_env.sh"
 
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.UseEnv = true'
 
@@ -105,6 +106,8 @@ _configure_smoketest() {
     # Use none default port for smoketest
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.LocalTcp.Config.Port = 54323'
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.PublicTcpClient.Config.Port = 54324'
+    sed -i 's,54323,54324,' "${_SMOKETEST_ENV}"
+    sed -i 's,54322,54323,' "${_SMOKETEST_ENV}"
 
     # Turn off unused backends
     if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then
