@@ -19,13 +19,13 @@ DEPENDS += "\
 
 ELOS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/elos.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
-SRC_VERSION = "1.14.12"
+SRC_VERSION = "1.25.5"
 PV = "${SRC_VERSION}+git${SRCPV}"
 SRC_GITREF = "branch=main"
 SRC_URI = "\
     ${ELOS_SRC_REPO};${SRC_GITREF} \
 "
-SRCREV = "14c1a4f9c7a4cc47c62e5bd6c9cd3aa1d1e8269e"
+SRCREV = "8fe29916c80a040ada9cfac254bff91e0abc08c9"
 
 S = "${WORKDIR}/git"
 
@@ -70,11 +70,6 @@ PACKAGECONFIG[dlt] = " \
   -DELOSD_LIBDLT=on -DELOSD_EVENTLOGGING_BACKEND_DLT=on, \
   -DELOSD_LIBDLT=off -DELOSD_EVENTLOGGING_BACKEND_DLT=off \
 "
-PACKAGECONFIG[mongodb] = " \
-  -DELOSD_EVENTLOGGING_BACKEND_NOSQL=on, \
-  -DELOSD_EVENTLOGGING_BACKEND_NOSQL=off, \
-  mongoc \
-"
 PACKAGECONFIG[demos] = "-DELOS_DEMOS=on,-DELOS_DEMOS=off,log4c libesmtp"
 PACKAGECONFIG[mocks] = "-DELOS_MOCK_LIBRARY=on,-DELOS_MOCK_LIBRARY=off,cmocka cmocka-extensions"
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on -DINSTALL_UNIT_TESTS=on,-DUNIT_TESTS=off -DINSTALL_UNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
@@ -97,7 +92,8 @@ edit_elos_config() {
 }
 
 _configure_smoketest() {
-    _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/config.json"
+    _SMOKETEST_CONFIG="${D}/${libdir}/test/elos/smoketest/elosd.json"
+    _SMOKETEST_ENV="${D}/${libdir}/test/elos/smoketest/smoketest_env.sh"
 
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.UseEnv = true'
 
@@ -110,6 +106,8 @@ _configure_smoketest() {
     # Use none default port for smoketest
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.LocalTcp.Config.Port = 54323'
     edit_elos_config "${_SMOKETEST_CONFIG}" '.root.elos.ClientInputs.Plugins.PublicTcpClient.Config.Port = 54324'
+    sed -i 's,54323,54324,' "${_SMOKETEST_ENV}"
+    sed -i 's,54322,54323,' "${_SMOKETEST_ENV}"
 
     # Turn off unused backends
     if [ "${@bb.utils.contains('PACKAGECONFIG', 'sql', 'YES', 'NO', d)}" != 'YES' ]; then

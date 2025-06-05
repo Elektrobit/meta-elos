@@ -29,7 +29,6 @@ test_config "${BASEDIR}/ci/local.conf" "${BASEDIR}/ci/bblayers.conf"
 test_config "${BASEDIR}/ci/local.conf.minimal" "${BASEDIR}/ci/bblayers.conf.minimal"
 test_config "${BASEDIR}/ci/local.conf.smoketest" "${BASEDIR}/ci/bblayers.conf.smoketest"
 test_config "${BASEDIR}/ci/local.conf.utest" "${BASEDIR}/ci/bblayers.conf.utest"
-test_config "${BASEDIR}/ci/local.conf.benchmark" "${BASEDIR}/ci/bblayers.conf.benchmark"
 
 echo "###################################"
 echo "Results"

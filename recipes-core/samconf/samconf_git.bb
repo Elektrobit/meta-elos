@@ -7,9 +7,9 @@ HOMEPAGE = "https://elos-logger.org"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.61.1"
+SRC_VERSION = "0.73.1"
 SRC_GITREF = "branch=main"
-SRCREV = "6aa1faa378eae932bb69710952261994b31a991b"
+SRCREV = "d8351fba17329606c0d446c0030e5a22ea18d470"
 
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
@@ -53,6 +53,7 @@ do_install:append () {
   install -m 0644 ${S}/test/smoketest/samconf.pem ${D}/${libdir}/test/${PN}-integration/
   sed -i 's,/bin/bash,/bin/sh,' ${D}/${libdir}/test/${PN}-integration/smoketest.sh
   sed -i 's,DIST_DIR=$(realpath "$BUILD_DIR/dist/"),DIST_DIR="/",' ${D}/${libdir}/test/${PN}-integration/smoketest.sh
+  install -m 0755 ${S}/test/smoketest/smoketest_env.sh ${D}/${libdir}/test/${PN}-integration/
 }
 
 FILES:${PN} += "/usr/lib/${PN}"
