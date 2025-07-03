@@ -7,7 +7,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
       - name: Install Build Dependencies
@@ -44,13 +44,14 @@ jobs:
           . poky/oe-init-build-env
 
       - name: Setup meta-elos
+        env:
+          LAYER_DIR: $YOCTO_BUILD_PATH
         run: |
-          echo 'MACHINE = "qemux86"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
-          echo 'PACKAGECONFIG:append:pn-elos = " daemon"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
-          echo 'IMAGE_INSTALL += "elos-daemon"' >> $YOCTO_BUILD_PATH/build/conf/local.conf
-          echo 'BBLAYERS += "' $YOCTO_BUILD_PATH/meta-elos/ '"' >> $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+          cp $YOCTO_BUILD_PATH/meta-elos/ci/local.conf $YOCTO_BUILD_PATH/build/conf/local.conf
+          cp $YOCTO_BUILD_PATH/meta-elos/ci/bblayers.conf $YOCTO_BUILD_PATH/build/conf/bblayers.conf
           echo "########### local.conf to build ###################"
           cat $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+          cat $YOCTO_BUILD_PATH/build/conf/local.conf
 
 
       - name: create image
