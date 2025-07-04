@@ -46,10 +46,13 @@ USER $USER
 ENV LC_ALL=en_US.UTF-8
 ENV DOCKERBUILD=1
 ENV BBCACHE="/home/ci/bbcache"
+ENV PROJECT_LAYER_DIR="/home/$USER/layers"
 
-RUN git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git /home/$USER/layers/poky/
-RUN git clone --depth 1 -b kirkstone git://git.openembedded.org/meta-openembedded /home/$USER/layers/meta-openembedded/
+RUN git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git ${PROJECT_LAYER_DIR}/poky/
+RUN git clone --depth 1 -b kirkstone git://git.openembedded.org/meta-openembedded ${PROJECT_LAYER_DIR}/meta-openembedded/
+RUN ln -s /base ${PROJECT_LAYER_DIR}/meta-elos
 
-RUN echo ". /home/$USER/layers/poky/oe-init-build-env /base/build >/dev/null" >> /home/$USER/.bashrc
+RUN echo ". /home/$USER/layers/poky/oe-init-build-env /base/build"  >> /home/$USER/.bashrc \
+    && echo 'export BB_ENV_PASSTHROUGH_ADDITIONS="${BB_ENV_PASSTHROUGH_ADDITIONS} PROJECT_LAYER_DIR"' >> /home/$USER/.bashrc
 
 CMD /bin/bash
