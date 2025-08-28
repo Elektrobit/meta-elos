@@ -178,6 +178,8 @@ FILES:${PN}-demos = "\
     ${bindir}/demo_eventbuffer \
     ${bindir}/demo_libelos_v2 \
     ${bindir}/demo_scanner_shmem \
+    ${bindir}/elos_dlt_bin_log_parser \
+    ${datadir}/elos/elos_dlt_bin_log_parser/sample_log.dlt \
     ${bindir}/elosMon \
     ${bindir}/elos_log4c_demo \
     ${bindir}/elosc-cpp \
