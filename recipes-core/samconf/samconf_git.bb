@@ -7,9 +7,9 @@ HOMEPAGE = "https://elos-logger.org"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
 
-SRC_VERSION = "0.75.4"
+SRC_VERSION = "0.75.8"
 SRC_GITREF = "branch=main"
-SRCREV = "bbf0d89efec292b25e1fd0ccce8b7039ceb1c5a9"
+SRCREV = "c4a5b93b8dab6b9ab5c6f354c0fdc345783a64ef"
 
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
