@@ -9,6 +9,7 @@ RUN apt-get update \
  && apt-get install -y \
     build-essential \
     cpio \
+    curl \
     diffstat chrpath \
     file \
     gawk wget \
