@@ -56,10 +56,10 @@ do_install:append () {
   install -m 0755 ${S}/test/smoketest/smoketest_env.sh ${D}/${libdir}/test/${PN}-integration/
 }
 
-FILES:${PN} += "/usr/lib/${PN}"
+FILES:${PN} += "${libdir}/${PN}"
 
-FILES:${PN}-utest += "/usr/lib/test/${PN}"
-FILES:${PN}-integration += "/usr/lib/test/${PN}-integration"
+FILES:${PN}-utest += "${libdir}/test/${PN}"
+FILES:${PN}-integration += "${libdir}/test/${PN}-integration"
 INSANE_SKIP:${PN}-utest += "staticdev"
 INSANE_SKIP:${PN}-integration += "staticdev"
 

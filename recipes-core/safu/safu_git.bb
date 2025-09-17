@@ -42,7 +42,7 @@ PACKAGECONFIG[mocks] = " \
     cmocka cmocka-extensions \
 "
 
-FILES:${PN}-utest += "/usr/lib/test/${PN}"
+FILES:${PN}-utest += "${libdir}/test/${PN}"
 INSANE_SKIP:${PN}-utest += "staticdev"
 
 FILES:${PN}-mocks += " \

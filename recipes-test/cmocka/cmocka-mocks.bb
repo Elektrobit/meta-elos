@@ -30,4 +30,4 @@ DEPENDS += "\
     openssl \
 "
 
-FILES:${PN} += "/usr/lib/${PN}"
+FILES:${PN} += "${libdir}/${PN}"
