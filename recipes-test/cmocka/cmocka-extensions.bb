@@ -22,4 +22,4 @@ EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
 
 DEPENDS += "cmocka"
 
-FILES:${PN} += "/usr/lib/${PN}"
+FILES:${PN} += "${libdir}/${PN}"
