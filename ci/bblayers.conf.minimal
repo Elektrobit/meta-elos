@@ -4,11 +4,12 @@ POKY_BBLAYERS_CONF_VERSION = "2"
 
 BBPATH = "${TOPDIR}"
 BBFILES ?= ""
+PROJECT_LAYER_DIR ?= "${TOPDIR}/.."
 
 BBLAYERS ?= " \
-  /home/ci/layers/poky/meta \
-  /home/ci/layers/poky/meta-poky \
-  /home/ci/layers/poky/meta-yocto-bsp \
-  /home/ci/layers/meta-openembedded/meta-oe/ \
-  /base/ \
+  ${PROJECT_LAYER_DIR}/meta-elos \
+  ${PROJECT_LAYER_DIR}/poky/meta \
+  ${PROJECT_LAYER_DIR}/poky/meta-poky \
+  ${PROJECT_LAYER_DIR}/poky/meta-yocto-bsp \
+  ${PROJECT_LAYER_DIR}/meta-openembedded/meta-oe/ \
   "

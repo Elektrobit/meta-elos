@@ -19,13 +19,13 @@ DEPENDS += "\
 
 ELOS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/elos.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
-SRC_VERSION = "1.25.9"
+SRC_VERSION = "1.27.23"
 PV = "${SRC_VERSION}+git${SRCPV}"
 SRC_GITREF = "branch=main"
 SRC_URI = "\
     ${ELOS_SRC_REPO};${SRC_GITREF} \
 "
-SRCREV = "6612ba4b6be14005305579d0b5b1437b5565219a"
+SRCREV = "b64299e95e56dd4ccb9e09c87aac324d1ac538cf"
 
 S = "${WORKDIR}/git"
 
@@ -178,6 +178,8 @@ FILES:${PN}-demos = "\
     ${bindir}/demo_eventbuffer \
     ${bindir}/demo_libelos_v2 \
     ${bindir}/demo_scanner_shmem \
+    ${bindir}/elos_dlt_bin_log_parser \
+    ${datadir}/elos/elos_dlt_bin_log_parser/sample_log.dlt \
     ${bindir}/elosMon \
     ${bindir}/elos_log4c_demo \
     ${bindir}/elosc-cpp \
