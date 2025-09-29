@@ -51,10 +51,11 @@ core-image-minimal:
     - when: always
   before_script:
     - env | sort
+    - pwd
     - |
       if [ "$SOURCES_URI" != '' ]; then
         echo "Changing repos base url to '${SOURCES_URI}'"
-        echo META_ELOS_SRC_REPO_BASE = \"${SOURCES_URI}\" >> conf/layer.conf
+        export META_ELOS_SRC_REPO_BASE="${SOURCES_URI}"
       fi
     - sudo locale-gen en_US.UTF-8
     - mkdir -p $YOCTO_BUILD_PATH
