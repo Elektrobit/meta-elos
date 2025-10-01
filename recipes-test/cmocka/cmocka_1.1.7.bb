@@ -18,5 +18,5 @@ inherit cmake pkgconfig
 EXTRA_OECMAKE=""
 LTO=""
 
-FILES:${PN} += "/usr/lib/${PN}"
+FILES:${PN} += "${libdir}/${PN}"
 
