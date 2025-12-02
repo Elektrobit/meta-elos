@@ -193,7 +193,7 @@ FILES:${PN}-demos = "\
 "
 RDEPENDS:${PN}-demos += "${PN}-common"
 
-FILES:${PN}-plugins = "${libdir}/elos"
+FILES:${PN}-plugins = "${libdir}/elos ${bindir}/elos_log_cleanup"
 RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
 
 RDEPENDS:${PN}-smoketest += " \
