@@ -24,11 +24,12 @@ build-docker-image:
   rules:
     - when: always
   services:
-    - name: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX/docker:dind
+    - name: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX/docker:29-dind
       variables:
         DOCKER_TLS_CERTDIR: ""
       # hostname of dind container inside the private network has to be "docker"
       alias: docker
+      command: ["--tls=false"]
   image: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX/docker:latest
   before_script:
     - env | sort
