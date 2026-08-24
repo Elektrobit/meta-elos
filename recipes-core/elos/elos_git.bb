@@ -19,13 +19,13 @@ DEPENDS += "\
 
 ELOS_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/elos.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
-SRC_VERSION = "1.40.4"
+SRC_VERSION = "1.41.0"
 PV = "${SRC_VERSION}+git${SRCPV}"
 SRC_GITREF = "branch=main"
 SRC_URI = "\
     ${ELOS_SRC_REPO};${SRC_GITREF} \
 "
-SRCREV = "a98f613ac15b2632d2472e35ca383bde586ba398"
+SRCREV = "931a2ae9e09231fa9f796b31f39a05a75ca1eed1"
 
 S = "${WORKDIR}/git"
 
@@ -193,7 +193,7 @@ FILES:${PN}-demos = "\
 "
 RDEPENDS:${PN}-demos += "${PN}-common"
 
-FILES:${PN}-plugins = "${libdir}/elos"
+FILES:${PN}-plugins = "${libdir}/elos ${bindir}/elos_log_cleanup"
 RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
 
 RDEPENDS:${PN}-smoketest += " \

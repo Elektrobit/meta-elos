@@ -1,0 +1,85 @@
+variables:
+  # Runner will discover the UID and GID of the user configured in the image used by the build container
+  # and will change the ownership of the working directory and files by running the chmod command in the
+  # predefined container (after updating sources, restoring cache and downloading artifacts).
+  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: "true"
+  GIT_SUBMODULE_STRATEGY: "normal"
+  # bitbake caches on a shared volume (pre-configured)
+  BBCACHE: "$CI_BUILDS_DIR/persist/$CI_PROJECT_NAMESPACE"
+  BUILD_DEMO_CONTAINER: false
+  YOCTO_BUILD_PATH: /tmp/yocto-test-build/
+  PROJECT_LAYER_DIR: $YOCTO_BUILD_PATH
+
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+
+default:
+  tags:
+    - docker
+  image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+build-docker-image:
+  stage: .pre
+  rules:
+    - when: always
+  services:
+    - name: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX/docker:29-dind
+      variables:
+        DOCKER_TLS_CERTDIR: ""
+      # hostname of dind container inside the private network has to be "docker"
+      alias: docker
+      command: ["--tls=false"]
+  image: $CI_DEPENDENCY_PROXY_GROUP_IMAGE_PREFIX/docker:latest
+  before_script:
+    - env | sort
+    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - echo "$CI_DEPENDENCY_PROXY_PASSWORD" | docker login $CI_DEPENDENCY_PROXY_SERVER -u $CI_DEPENDENCY_PROXY_USER --password-stdin
+  script:
+    - docker build
+      --pull
+      --push
+      --cache-from $CI_REGISTRY_IMAGE:buildcache
+      --build-arg BUILDKIT_INLINE_CACHE=1
+      --tag $CI_REGISTRY_IMAGE:buildcache
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      -f ci/Dockerfile .
+
+
+core-image-minimal:
+  stage: build
+  rules:
+    - when: always
+  before_script:
+    - env | sort
+    - pwd
+    - |
+      if [ "$SOURCES_URI" != '' ]; then
+        echo "Changing repos base url to '${SOURCES_URI}'"
+        export META_ELOS_SRC_REPO_BASE="${SOURCES_URI}"
+      fi
+    - sudo locale-gen en_US.UTF-8
+    - mkdir -p $YOCTO_BUILD_PATH
+    - git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git $YOCTO_BUILD_PATH/poky
+    - git clone --depth 1 -b kirkstone https://github.com/openembedded/meta-openembedded.git $YOCTO_BUILD_PATH/meta-openembedded
+    - ln -s $CI_PROJECT_DIR $YOCTO_BUILD_PATH/meta-elos
+    - cd $YOCTO_BUILD_PATH
+    - . poky/oe-init-build-env
+    - cp $YOCTO_BUILD_PATH/meta-elos/ci/local.conf $YOCTO_BUILD_PATH/build/conf/local.conf
+    - cp $YOCTO_BUILD_PATH/meta-elos/ci/bblayers.conf $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+    - echo "=========== local.conf to build ==========="
+    - cat $YOCTO_BUILD_PATH/build/conf/bblayers.conf
+    - cat $YOCTO_BUILD_PATH/build/conf/local.conf
+    - cat $YOCTO_BUILD_PATH/meta-elos/conf/layer.conf
+    - cd $YOCTO_BUILD_PATH
+    - . poky/oe-init-build-env
+  script:
+    - bitbake-layers show-layers
+    - bitbake elos
+    - cp -r $YOCTO_BUILD_PATH/build/tmp/deploy $CI_PROJECT_DIR/deploy
+
+  artifacts:
+    when: always
+    paths:
+      - deploy
+
