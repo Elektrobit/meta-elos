@@ -5,11 +5,11 @@ DESCRIPTION = "Library to securely manage program configuration options, used by
 HOMEPAGE = "https://elos-logger.org"
 
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=894bdc0a9e667e7c417fe1e24a0566b8"
 
-SRC_VERSION = "0.75.14"
-SRC_GITREF = "branch=main"
-SRCREV = "86a9025a480e04372209132c05fc2aaf0eef6b4d"
+DEPENDS += "json-c openssl safu"
+
+PV = "${SRC_VERSION}+git${SRCPV}"
 
 SAMCONF_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/samconf.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
@@ -17,23 +17,19 @@ SRC_URI = "\
     ${SAMCONF_SRC_REPO};${SRC_GITREF} \
 "
 
-PV = "${SRC_VERSION}+git${SRCPV}"
+SRC_VERSION = "0.75.14"
+SRC_GITREF = "branch=main"
+SRCREV = "86a9025a480e04372209132c05fc2aaf0eef6b4d"
 
 S = "${WORKDIR}/git"
 
+inherit cmake pkgconfig
+
 PACKAGES += "${PN}-integration"
-PACKAGES =+ " \
+PACKAGES =+ "\
     ${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)} \
     ${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks ${PN}-mocks-dev', '', d)} \
 "
-
-inherit cmake pkgconfig
-
-EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
-
-DEPENDS += "openssl json-c safu"
-RDEPENDS:${PN} += "openssl-bin"
-RDEPENDS:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'samconf-key', 'samconf-key', '', d)}"
 
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
 PACKAGECONFIG[mocks] = " \
@@ -41,6 +37,8 @@ PACKAGECONFIG[mocks] = " \
   -DSAMCONF_MOCK_LIBRARY=off, \
   cmocka cmocka-extensions \
 "
+
+EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release"
 
 do_install:append () {
   sed -i 's,/bin/bash,/bin/sh,' ${D}/${bindir}/samconf-sign
@@ -63,11 +61,14 @@ FILES:${PN}-integration += "${libdir}/test/${PN}-integration"
 INSANE_SKIP:${PN}-utest += "staticdev"
 INSANE_SKIP:${PN}-integration += "staticdev"
 
-FILES:${PN}-mocks += " \
+FILES:${PN}-mocks += "\
     ${libdir}/libmock_${PN}.so.* \
 "
 
-FILES:${PN}-mocks-dev += " \
+FILES:${PN}-mocks-dev += "\
     ${libdir}/libmock_${PN}.so \
     ${libdir}/cmake/${PN}/mock_${PN}* \
 "
+
+RDEPENDS:${PN} += "openssl-bin"
+RDEPENDS:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'samconf-key', 'samconf-key', '', d)}"
