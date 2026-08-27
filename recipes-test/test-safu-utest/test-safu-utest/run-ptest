@@ -4,7 +4,7 @@
 TESTS=$(find /usr/lib/test/safu -type f -executable)
 
 TEST_RESULT_PATH="/tmp/test-safu-utest"
-mkdir -p $TEST_RESULT_PATH    
+mkdir -p $TEST_RESULT_PATH
 
 FAIL=0
 for test in $TESTS; do

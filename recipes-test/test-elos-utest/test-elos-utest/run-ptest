@@ -8,7 +8,7 @@ TESTS=$(find /usr/lib/test/elos/utest -type f -executable)
 #skip failing test cases
 FAILTESTPATH="/usr/lib/test/elos/utest/tcp/test_tcp_pluginLoad_utest /usr/lib/test/elos/utest/unix/test_unix_pluginLoad_utest"
 TEST_RESULT_PATH="/tmp/test-elos-utest"
-mkdir -p $TEST_RESULT_PATH    
+mkdir -p $TEST_RESULT_PATH
 
 for i in $FAILTESTPATH; do
     echo "skip $i"
