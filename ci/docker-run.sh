@@ -38,11 +38,11 @@ cp "$BASEDIR/ci/bblayers.conf" "$bblayersconf"
 
 echo "==> run $PROJECT build container"
 mkdir -p "$BBCACHE"
-docker run --rm -it --privileged "$SSH_AGENT_OPTS" \
+docker run --rm -it --privileged $SSH_AGENT_OPTS \
     -e "TERM=$TERM" \
     -v "$HOME/.ssh":/home/ci/.ssh \
     -v "$BASEDIR/ci/sshconfig":/home/ci/.ssh/config \
     -v "$BBCACHE":/home/ci/bbcache \
     -v "$BASEDIR":/base \
     -w /base \
-    $PROJECT "$*"
+    $PROJECT $@
