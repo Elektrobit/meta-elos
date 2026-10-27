@@ -37,17 +37,17 @@ PACKAGECONFIG ?= "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'sysvinit', '', d)} \
 "
 
-PACKAGES =+ "${@bb.utils.contains('PACKAGECONFIG', 'daemon', '${PN}-daemon', '', d)}"
-PACKAGES =+ "${@bb.utils.contains('PACKAGECONFIG', 'tools', '${PN}-tools', '', d)}"
-PACKAGES =+ "${@bb.utils.contains('PACKAGECONFIG', 'plugins', '${PN}-plugins', '', d)}"
-PACKAGES =+ "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}"
-PACKAGES =+ "${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'daemon', '${PN}-daemon', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'tools', '${PN}-tools', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'plugins', '${PN}-plugins', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'demos', '${PN}-demos', '', d)}"
+PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'smoketest', '${PN}-smoketest', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '', d)}"
 PACKAGES += "${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
 
-PACKAGES =+ "${PN}-common ${PN}-libplugin"
+PACKAGES += "${PN}-common ${PN}-libplugin"
 
 EXTRA_OECMAKE = "\
     -DCMAKE_BUILD_TYPE=Release \
@@ -150,19 +150,34 @@ do_install:append () {
 FILES:${PN}-common += "\
     ${libdir}/libelos_common.so* \
 "
-INSANE_SKIP:${PN}-common = "dev-so"
+# nooelint: oelint.var.filesoverride - do not override package default
+FILES:${PN} = "\
+    ${libdir}/libelos.so* \
+    ${libdir}/libelos-cpp.so* \
+    ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${libdir}/libelosdlt.so*', '', d)} \
+"
+RDEPENDS:${PN} += "${PN}-common"
 
+# nooelint: oelint.var.order - matching packages with run time dependencies
+FILES:${PN}-libplugin += "${libdir}/libelosplugin.so*"
+RDEPENDS:${PN}-libplugin += "${PN}-common"
+
+# nooelint: oelint.var.order - matching packages with run time dependencies
 FILES:${PN}-daemon += "\
     ${sysconfdir}/elos/elosd.json \
     ${bindir}/elosd \
 "
+RDEPENDS:${PN}-daemon += "${PN}-common"
 
+# nooelint: oelint.var.order - matching packages with run time dependencies
 FILES:${PN}-tools += "\
     ${bindir}/elosc \
     ${bindir}/elos-coredump \
     ${sysconfdir}/elos/coredump.json \
 "
+RDEPENDS:${PN}-tools += "${PN}-common"
 
+# nooelint: oelint.var.order - matching packages with run time dependencies
 FILES:${PN}-demos += "\
     ${bindir}/demo_eloslog \
     ${bindir}/demo_eventbuffer \
@@ -179,40 +194,14 @@ FILES:${PN}-demos += "\
     ${bindir}/tinyElosc \
     ${libdir}/libeloslog4c.so* \
     ${sysconfdir}/elos/elos_log4c_demo \
-    ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${bindir}/elosDlt', '', d)} \
+  ${@bb.utils.contains('PACKAGECONFIG', 'dlt', '${bindir}/elosDlt', '', d)} \
 "
-
-FILES:${PN}-plugins += "\
-    ${libdir}/elos/* \
-    ${bindir}/elos_log_cleanup \
-"
-
-FILES:${PN}-libplugin += "${libdir}/libelosplugin.so*"
-INSANE_SKIP:${PN}-libplugin = "dev-so"
-
-FILES:${PN}-mocks += "${libdir}/libmock_libelos.so*"
-
-FILES:${PN}-smoketest += "${libdir}/test/${PN}/smoketest"
-FILES:${PN}-utest += "${libdir}/test/${PN}/utest"
-
-SYSTEMD_AUTO_ENABLE = "enable"
-SYSTEMD_PACKAGES = "${PN}-systemd"
-SYSTEMD_SERVICE:${PN}-systemd = "elosd.service"
-FILES:${PN}-systemd += "${systemd_unitdir}/system/elosd.service"
-
-INITSCRIPT_NAME:${PN}-sysvinit = "elosd"
-INITSCRIPT_PARAMS:${PN}-sysvinit = "start 05 5 2 . stop 95 0 1 6 ."
-INITSCRIPT_PACKAGES = "${PN}-sysvinit"
-FILES:${PN}-sysvinit += "\
-    ${sysconfdir}/init.d/elosd \
-"
-
-RDEPENDS:${PN} += "${PN}-common"
-RDEPENDS:${PN}-libplugin += "${PN}-common"
-RDEPENDS:${PN}-daemon += "${PN}-common"
-RDEPENDS:${PN}-tools += "${PN}-common"
 RDEPENDS:${PN}-demos += "${PN}-common"
+
+# nooelint: oelint.var.order - matching packages with run time dependencies
+FILES:${PN}-plugins += "${libdir}/elos ${bindir}/elos_log_cleanup"
 RDEPENDS:${PN}-plugins += "${PN}-common ${PN}-libplugin"
+
 RDEPENDS:${PN}-smoketest += "\
     ${PN}-daemon \
     ${PN}-demos \
@@ -222,12 +211,29 @@ RDEPENDS:${PN}-smoketest += "\
     procps \
     ${@bb.utils.contains('PACKAGECONFIG', 'systemd', 'socat', '', d)} \
 "
+# nooelint: oelint.var.order - matching packages with run time dependencies
+FILES:${PN}-smoketest += "${libdir}/test/${PN}/smoketest"
+
+FILES:${PN}-mocks += "${libdir}/libmock_libelos.so*"
+FILES:${PN}-utest += "${libdir}/test/${PN}/utest"
 RDEPENDS:${PN}-utest += "safu-mocks samconf-mocks"
+
+SYSTEMD_AUTO_ENABLE = "enable"
+SYSTEMD_PACKAGES = "${PN}-systemd"
+SYSTEMD_SERVICE:${PN}-systemd = "elosd.service"
+# nooelint: oelint.var.order - matching packages with run time dependencies
+FILES:${PN}-systemd += "${systemd_unitdir}/system/elosd.service"
 RDEPENDS:${PN}-systemd += "${PN}-daemon ${PN}-plugins"
-RDEPENDS:${PN}-sysvinit += "${PN}-daemon ${PN}-plugins"
-
 RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'systemd', '${PN}-systemd', '', d)}"
-RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
-
 RCONFLICTS:${PN}-systemd = "busybox-syslog sysklogd syslog-ng rsyslog"
+
+INITSCRIPT_NAME:${PN}-sysvinit = "elosd"
+INITSCRIPT_PARAMS:${PN}-sysvinit = "start 05 5 2 . stop 95 0 1 6 ."
+INITSCRIPT_PACKAGES = "${PN}-sysvinit"
+# nooelint: oelint.var.order - matching packages with run time dependencies
+FILES:${PN}-sysvinit += "\
+    ${sysconfdir}/init.d/elosd \
+"
+RDEPENDS:${PN}-sysvinit += "${PN}-daemon ${PN}-plugins"
+RRECOMMENDS:${PN}-daemon:append = " ${@bb.utils.contains('PACKAGECONFIG', 'sysvinit', '${PN}-sysvinit', '', d)}"
 RCONFLICTS:${PN}-sysvinit = "busybox-syslog sysklogd syslog-ng rsyslog"

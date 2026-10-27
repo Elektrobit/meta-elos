@@ -38,6 +38,7 @@ cp "$BASEDIR/ci/bblayers.conf" "$bblayersconf"
 
 echo "==> run $PROJECT build container"
 mkdir -p "$BBCACHE"
+# shellcheck disable=SC2086 # need unquoted options
 docker run --rm -it --privileged $SSH_AGENT_OPTS \
     -e "TERM=$TERM" \
     -v "$HOME/.ssh":/home/ci/.ssh \
@@ -45,4 +46,4 @@ docker run --rm -it --privileged $SSH_AGENT_OPTS \
     -v "$BBCACHE":/home/ci/bbcache \
     -v "$BASEDIR":/base \
     -w /base \
-    $PROJECT $@
+    $PROJECT "$@"
