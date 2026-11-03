@@ -3,9 +3,7 @@
 
 export SMOKETEST_RESULT_DIR=/tmp/test-samconf-integration
 
-
 TEST_RUNNER=/usr/lib/test/samconf-integration/smoketest.sh
-
 
 FAIL=0
 RESULT=""

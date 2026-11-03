@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 CMDPATH="$(realpath "$(dirname "$0")")"
 BASEDIR="${CMDPATH%/*}"
 
@@ -11,7 +10,7 @@ cd "$BASEDIR" || exit 1
 
 RESULT_FILE="$(mktemp /tmp/meta-elos-test_XXXXXX.log)"
 
-. $HOME/layers/poky/oe-init-build-env "${BASEDIR}/build"
+. "$HOME"/layers/poky/oe-init-build-env "${BASEDIR}/build"
 
 function test_config() {
     LOCAL_CONF="$1"

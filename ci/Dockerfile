@@ -1,4 +1,10 @@
 FROM ubuntu:jammy
+ARG UBUNTU_MIRROR="https://ftp.gwdg.de/pub/linux/debian/ubuntu/"
+
+RUN apt-get update && apt-get reinstall ca-certificates -y
+RUN sed -i "s,http://archive.ubuntu.com/ubuntu/,$UBUNTU_MIRROR," /etc/apt/sources.list \
+ && sed -i "s,http://security.ubuntu.com/ubuntu/,$UBUNTU_MIRROR," /etc/apt/sources.list \
+ && cat /etc/apt/sources.list
 
 ARG USER=ci
 ARG UID=1000
@@ -49,8 +55,8 @@ ENV DOCKERBUILD=1
 ENV BBCACHE="/home/ci/bbcache"
 ENV PROJECT_LAYER_DIR="/home/$USER/layers"
 
-RUN git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git ${PROJECT_LAYER_DIR}/poky/
-RUN git clone --depth 1 -b kirkstone git://git.openembedded.org/meta-openembedded ${PROJECT_LAYER_DIR}/meta-openembedded/
+RUN git clone --depth 1 -b kirkstone https://git.yoctoproject.org/poky.git ${PROJECT_LAYER_DIR}/poky/
+RUN git clone --depth 1 -b kirkstone https://git.openembedded.org/meta-openembedded ${PROJECT_LAYER_DIR}/meta-openembedded/
 RUN ln -s /base ${PROJECT_LAYER_DIR}/meta-elos
 
 RUN echo ". /home/$USER/layers/poky/oe-init-build-env /base/build"  >> /home/$USER/.bashrc \

@@ -41,7 +41,7 @@ done
 # shellcheck disable=SC2086 # intended splitting of $PARAM
 set -- $PARAM
 
-function get_latest_version {
+get_latest_version() {
     local repo="https://api.github.com/repos/Elektrobit/${1}"
     local release_info
     release_info=$(curl -s "${repo}/releases/latest")

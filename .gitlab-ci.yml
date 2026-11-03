@@ -2,7 +2,7 @@ variables:
   # Runner will discover the UID and GID of the user configured in the image used by the build container
   # and will change the ownership of the working directory and files by running the chmod command in the
   # predefined container (after updating sources, restoring cache and downloading artifacts).
-  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: "true"
+  FF_DISABLE_UMASK_FOR_DOCKER_EXECUTOR: "false"
   GIT_SUBMODULE_STRATEGY: "normal"
   # bitbake caches on a shared volume (pre-configured)
   BBCACHE: "$CI_BUILDS_DIR/persist/$CI_PROJECT_NAMESPACE"
@@ -60,7 +60,7 @@ core-image-minimal:
       fi
     - sudo locale-gen en_US.UTF-8
     - mkdir -p $YOCTO_BUILD_PATH
-    - git clone --depth 1 -b kirkstone git://git.yoctoproject.org/poky.git $YOCTO_BUILD_PATH/poky
+    - git clone --depth 1 -b kirkstone https://git.yoctoproject.org/poky.git $YOCTO_BUILD_PATH/poky
     - git clone --depth 1 -b kirkstone https://github.com/openembedded/meta-openembedded.git $YOCTO_BUILD_PATH/meta-openembedded
     - ln -s $CI_PROJECT_DIR $YOCTO_BUILD_PATH/meta-elos
     - cd $YOCTO_BUILD_PATH
