@@ -31,8 +31,6 @@ S = "${WORKDIR}/git"
 
 PACKAGECONFIG ?= "\
     daemon \
-    tools \
-    plugins \
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'sysvinit', 'sysvinit', '', d)} \
 "

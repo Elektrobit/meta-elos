@@ -53,6 +53,11 @@ jobs:
           cat $YOCTO_BUILD_PATH/build/conf/bblayers.conf
           cat $YOCTO_BUILD_PATH/build/conf/local.conf
 
+      - name: Show disk usage
+        run: df -h
+
+      - name: 10 largest directories
+        run: du -h -d1 / |sort -hr | head -n 10
 
       - name: create image
         run: |
