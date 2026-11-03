@@ -8,7 +8,7 @@ TESTS=$(find /usr/lib/test/samconf -type f -executable)
 #TESTS=$(echo $TESTS | sed "s|$FAILTESTPATH[ ]*||g")
 
 TEST_RESULT_PATH="/tmp/test-samconf-utest"
-mkdir -p $TEST_RESULT_PATH    
+mkdir -p $TEST_RESULT_PATH
 
 FAIL=0
 for test in $TESTS; do

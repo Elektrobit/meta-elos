@@ -5,11 +5,14 @@ DESCRIPTION = "Library of common utility API's used in elos and samconf."
 HOMEPAGE = "https://elos-logger.org"
 
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://${COMMON_LICENSE_DIR}/MIT;md5=0835ade698e0bcf8506ecda2f7b4f302"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=894bdc0a9e667e7c417fe1e24a0566b8"
 
-SRC_VERSION = "0.63.1"
-SRC_GITREF = "branch=main"
-SRCREV = "010e7c8951295c6156a45eda400970b1954be7b5"
+DEPENDS += "\
+    ${@bb.utils.contains('PACKAGECONFIG', 'mocks', 'cmocka-mocks', '', d)} \
+    json-c \
+"
+
+PV = "${SRC_VERSION}+git${SRCPV}"
 
 SAFU_SRC_REPO ?= "${META_ELOS_SRC_REPO_BASE}/safu.git${META_ELOS_SRC_REPO_PROTOCOL_PARAM}"
 
@@ -17,22 +20,17 @@ SRC_URI = "\
     ${SAFU_SRC_REPO};${SRC_GITREF} \
 "
 
-PV = "${SRC_VERSION}+git${SRCPV}"
+SRC_VERSION = "0.64.4"
+SRC_GITREF = "branch=main"
+SRCREV = "0bd8ba917b0de4e0f6aa378ecbe76ce1d88ba489"
 
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
 
-PACKAGES =+ " \
+PACKAGES =+ "\
     ${@bb.utils.contains('PACKAGECONFIG', 'utests', '${PN}-utest', '', d)} \
     ${@bb.utils.contains('PACKAGECONFIG', 'mocks', '${PN}-mocks ${PN}-mocks-dev', '', d)} \
-"
-
-EXTRA_OECMAKE="-DCMAKE_BUILD_TYPE=Release"
-
-DEPENDS += "\
-    json-c \
-    ${@bb.utils.contains('PACKAGECONFIG', 'mocks', 'cmocka-mocks', '', d)} \
 "
 
 PACKAGECONFIG[utests] = "-DUNIT_TESTS=on,-DUNIT_TESTS=off,cmocka cmocka-extensions cmocka-mocks"
@@ -42,14 +40,16 @@ PACKAGECONFIG[mocks] = " \
     cmocka cmocka-extensions \
 "
 
+EXTRA_OECMAKE = "-DCMAKE_BUILD_TYPE=Release"
+
 FILES:${PN}-utest += "${libdir}/test/${PN}"
 INSANE_SKIP:${PN}-utest += "staticdev"
 
-FILES:${PN}-mocks += " \
+FILES:${PN}-mocks += "\
     ${libdir}/libmock_${PN}.so.* \
 "
 
-FILES:${PN}-mocks-dev += " \
+FILES:${PN}-mocks-dev += "\
     ${libdir}/libmock_${PN}.so \
     ${libdir}/cmake/${PN}/mock_${PN}* \
 "
